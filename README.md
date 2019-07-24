@@ -10,7 +10,7 @@ Se debe correr desde el servidor.
 - Copiar borg_client en /etc/lunix/borg/borg_client_template
 - Generar usuario "borg" y crear la carpeta /home/borg/.ssh (asegurarse que tenga permisos)
 
-##USO
+## Uso
 borg_config [--encryption ENCRIPTACION] [--dir DIRECTORIO] [--client CLIENTE]
 
 argumentos opcionales:
