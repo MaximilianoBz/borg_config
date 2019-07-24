@@ -1,0 +1,76 @@
+#!/usr/bin/env bash
+#      __                _         _____   ____    __
+#     / /   __  ______  (_)  __   / ___/  / __ \  / /
+#    / /   / / / / __ \/ / |/_/   \__ \  / /_/ / / /
+#   / /___/ /_/ / / / / />  <    ___/ / / _, _/ / /____
+#  /_____/\__,_/_/ /_/_/_/|_|   /____(_)_/ |_(_)_____(_)
+#
+# Creado por Pablo Ramos
+#
+# Dependencies:
+#  borgbackup (https://github.com/borgbackup/borg)
+
+VERSION="0.1"
+DIR=/tmp/
+
+#Colores de texto
+BOLD=$(tput bold)
+NORMAL=$(tput sgr0)
+RED=$(tput setaf 1)
+
+#Variables de borg
+ENCRYPTION="repokey-blake2"
+DIRBASE="/u/borgbackup/"
+DIRREPO="cliente.ejemplo.com"
+BORGUSER="borg"
+
+#echo "this is ${BOLD}bold${NORMAL} but this isn't"
+
+show_help() {
+    echo "uso: borg_config [--encryption ENCRIPTACION] [--dir DIRECTORIO] [CLIENTE]"
+    echo " "
+    echo "${BOLD}borg_config"
+    echo "Genera configuracion y repositorio para un nuevo cliente de borgbackup"
+    echo "Este script se debe correr en el servidor de repositorios borg"
+    echo ""
+    echo "${NORMAL}argumentos opcionales:"
+    echo "   -e | --encryption          Encriptacion de repositorio (por defecto repokey-blake2)"
+    echo "   -d | --dir                 Directorio para el repositorio (por defecto mismo nombre que el cliente)"
+    echo "   -h | --help                Muestra este mensaje"
+    echo "   -v | --version             Muestra la version del script"
+}
+
+main() {
+
+    #Comprobar que este instalado borg
+    BORG=$(command -v borg)
+    [[ ${#BORG} -eq 0 ]] && echo "${RED}Es necesario instalar borgbackup" && exit
+
+}
+
+echo "$#"
+
+while [[ "$1" ]]; do
+    case "$1" in
+        #"--no-preview") preview=false ;;
+        #"--no-color-code") write_color_code=false ;;
+        #"--rgb") color_type="rgb" ;;
+        #"--image-viewer") image_viewer="$2" ;;
+        #"--stdout") stdout=true ;;
+        "--version") echo $VERSION && exit ;;
+        "--help") show_help && exit ;;
+    esac
+    shift
+done
+
+#Solo aceptar de a un cliente a la vez?
+if [ $# -ne 1 ]; then
+    echo -e "${RED}Ingresar un solo argumento"
+    echo -e "${NORMAL}"
+    echo "$#"
+	show_help
+    exit 1
+fi
+
+#Correr funcion main
+main
