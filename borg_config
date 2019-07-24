@@ -118,6 +118,15 @@ main() {
     sed -i s\#DIR_VAR\#$DIRREPO\#g $DIRCONFIG/$CLIENT.sh
     sed -i s\#PASS_VAR\#$PASS\#g $DIRCONFIG/$CLIENT.sh
 
+    #Instrucciones para cliente
+    echo "${BOLD}Instalación en cliente:"
+    echo "Copiar la llave privada $DIRREPO/.ssh/$CLIENT en el cliente dentro de /root/.ssh/identity"
+    echo "Copiar el script $DIRREPO/$CLIENT.sh en el cliente dentro de /usr/local/sbin/borg-client"
+    echo "Hacer ejecutable el script en el cliente"
+    echo "Modificar las carpetas en el script de ser necesario"
+    echo "Agregar el script en crontab:"
+    echo "0 0 * * * /usr/local/sbin/borg-client"
+
 }
 
 #Asignamos argumentos a variables
