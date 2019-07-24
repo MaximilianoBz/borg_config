@@ -122,7 +122,3 @@ done
 
 #Correr funcion main
 main
-
-#Prueba variables
-echo $ENCRYPTION
-echo $DIRCUSTOM
