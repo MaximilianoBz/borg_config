@@ -73,8 +73,8 @@ main() {
         echo "${RED}Ya existe el repositorio $DIRREPO";
         ERROR=1;
     fi
-    if [ ! -e $DIRCONFIG_client_template ]; then
-        echo "${RED}No existe el script base para cliente en $DIRCONFIG_client_template";
+    if [ ! -e $DIRCONFIG/borg_client_template ]; then
+        echo "${RED}No existe el script base para cliente en $DIRCONFIG/borg_client_template";
         ERROR=1;
     fi
 
