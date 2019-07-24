@@ -9,3 +9,13 @@ Se debe correr desde el servidor.
 - Copiar borg_config en /usr/local/sbin/ y hacer ejecutable
 - Copiar borg_client en /etc/lunix/borg/borg_client_template
 - Generar usuario "borg" y crear la carpeta /home/borg/.ssh (asegurarse que tenga permisos)
+
+##USO
+borg_config [--encryption ENCRIPTACION] [--dir DIRECTORIO] [--client CLIENTE]
+
+argumentos opcionales:
+   -c | --client              FQDN del cliente (-c cliente.ejemplo.com)
+   -e | --encryption          Encriptacion de repositorio (Default: repokey-blake2)
+   -d | --dir                 Full path para el repositorio (Default: nombre del cliente dentro de /u/borgbackup/)
+   -h | --help                Muestra este mensaje
+   -v | --version             Muestra la version del script<Paste>
