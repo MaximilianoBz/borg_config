@@ -50,7 +50,7 @@ main() {
 
     #Comprobar que este instalado borg
     BORG=$(command -v borg)
-    [[ ${#BORG} -eq 0 ]] && echo "${RED}Es necesario instalar borgbackup" && exit
+    [[ ${#BORG} -eq 0 ]] && echo "${RED}Es necesario instalar borgbackup" && exit;
 
     #Si no se ingreso el nombre de cliente, ingresar uno
     if [ -z ${CLIENT+x} ]; then
@@ -64,6 +64,7 @@ main() {
     fi
 
     #Comprobamos que no exista el repositorio ni la llave
+	#Comprobar tambien si existen archivos .pass y .key ?
     if [ -e /home/$BORGUSER/.ssh/$CLIENT ]; then
         echo "${RED}Ya existe la llave SSH /home/$BORGUSER/.ssh/$CLIENT";
         ERROR=1;
@@ -81,21 +82,36 @@ main() {
         exit;
     fi
 
+    #Generar carpeta de configuracion si no existe
+    if [ ! -e /etc/lunix/borg/ ]; then
+        mkdir /etc/lunix/borg/ ;
+        chmod -R 600 /etc/lunix/borg/ ;
+    fi
+
     #Generar nueva llave SSH para el cliente
     ssh-keygen -t rsa -b 4096 -C "$CLIENT" -f /home/$BORGUSER/.ssh/$CLIENT -q -N ""
     PUBKEY=$(cat /home/$BORGUSER/.ssh/$CLIENT.pub)
 
     #Habilitar acceso al repositorio con la nueva llave
     echo "#$CLIENT" >> /home/$BORGUSER/.ssh/authorized_keys
-    echo "command=\"borg serve --append-only --restrict-to-path $DIRREPO\" $PUBKEY" >> /home/$BORGUSER/.ssh/authorized_keys
+    echo "command=\"borg serve --append-only --restrict-to-path $DIRREPO/\" $PUBKEY" >> /home/$BORGUSER/.ssh/authorized_keys
 
-    #Generamos una passphrase random
+    #Generamos una passphrase random y la guardamos
     PASS=$(openssl rand -base64 24)
     echo "Utilizar passphrase: ${YELLOW}$PASS"
     echo "${NORMAL}Si se utiliza otro passphrase, es necesario despues modificar el script cliente"
+    echo $PASS > /etc/lunix/borg/$CLIENT.pass
 
     #Creamos el repositorio como el usuario que se va a utilizar para la conexion remota
     su - $BORGUSER -c "borg init -e=$ENCRYPTION $DIRREPO"
+
+    #Guardamos la key
+    borg key export $DIRREPO /etc/lunix/borg/$CLIENT.key
+
+    #Generamos script basico para cliente
+    sed s/SRV_VAR/$SERVER/g /etc/lunix/borg_client_template > /etc/lunix/borg/$CLIENT.sh
+    sed -i s\#DIR_VAR\#$DIRREPO\#g /etc/lunix/borg/$CLIENT.sh
+    sed -i s\#PASS_VAR\#$PASS\#g /etc/lunix/borg/$CLIENT.sh
 
 }
 
