@@ -7,5 +7,5 @@ Se debe correr desde el servidor.
 
 ## Instalacion
 - Copiar borg_config en /usr/local/sbin/ y hacer ejecutable
-- Copiar borg_client en /etc/lunix/borg_client_template
+- Copiar borg_client en /etc/lunix/borg/borg_client_template
 - Generar usuario "borg" y crear la carpeta /home/borg/.ssh (asegurarse que tenga permisos)
