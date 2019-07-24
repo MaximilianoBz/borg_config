@@ -12,6 +12,7 @@
 
 VERSION="0.1"
 DIR=/tmp/
+ERROR=0
 
 #Colores de texto
 BOLD=$(tput bold)
@@ -21,21 +22,21 @@ RED=$(tput setaf 1)
 #Variables de borg
 ENCRYPTION="repokey-blake2"
 DIRBASE="/u/borgbackup/"
-DIRREPO="cliente.ejemplo.com"
-BORGUSER="borg"
+BORGUSER="admin"
 
 #echo "this is ${BOLD}bold${NORMAL} but this isn't"
 
 show_help() {
-    echo "uso: borg_config [--encryption ENCRIPTACION] [--dir DIRECTORIO] [CLIENTE]"
+    echo "uso: borg_config [--encryption ENCRIPTACION] [--dir DIRECTORIO] [--client CLIENTE]"
     echo " "
     echo "${BOLD}borg_config"
     echo "Genera configuracion y repositorio para un nuevo cliente de borgbackup"
     echo "Este script se debe correr en el servidor de repositorios borg"
     echo ""
     echo "${NORMAL}argumentos opcionales:"
-    echo "   -e | --encryption          Encriptacion de repositorio (por defecto repokey-blake2)"
-    echo "   -d | --dir                 Directorio para el repositorio (por defecto mismo nombre que el cliente)"
+    echo "   -c | --client              FQDN del cliente (${BOLD}-c cliente.ejemplo.com)"
+    echo "   ${NORMAL}-e | --encryption          Encriptacion de repositorio (Default: repokey-blake2)"
+    echo "   -d | --dir                 Full path para el repositorio (Default: nombre del cliente dentro de $DIRBASE)"
     echo "   -h | --help                Muestra este mensaje"
     echo "   -v | --version             Muestra la version del script"
 }
@@ -46,31 +47,63 @@ main() {
     BORG=$(command -v borg)
     [[ ${#BORG} -eq 0 ]] && echo "${RED}Es necesario instalar borgbackup" && exit
 
+    #Si no se ingreso el nombre de cliente, ingresar uno
+    if [ -z ${CLIENT+x} ]; then
+        echo "Ingrese FQDN del cliente:";
+        read CLIENT;
+    fi
+    #Si no se ingreso un directorio. usar el por defecto
+    if [ -z ${DIRREPO+x} ]; then
+        DIRREPO=$DIRBASE$CLIENT;
+        echo $DIRREPO;
+    fi
+
+    #Comprobamos que no exista el repositorio ni la llave
+    if [ -e /home/$BORGUSER/.ssh/$CLIENT ]; then
+        echo "${RED}Ya existe la llave SSH /home/$BORGUSER/.ssh/$CLIENT";
+        ERROR=1;
+    fi
+    if [ -e $DIRREPO ]; then
+        echo "${RED}Ya existe el repositorio $DIRREPO";
+        ERROR=1;
+    fi
+
+    #Si alguno de los chequeos anterior dio error, salir del script
+    if [ $ERROR = 1 ]; then
+        echo "${NORMAL}";
+        echo "Se detuvo el script sin generar ninguna configuracion";
+        echo "Corregir argumentos antes de volver a ejecutar.";
+        exit;
+    fi
+    #Generar nueva llave SSH para el cliente
+    ssh-keygen -t rsa -b 4096 -C "$CLIENT" -f /home/$BORGUSER/.ssh/$CLIENT -q -N ""
+
 }
 
-echo "$#"
-
+#Asignamos argumentos a variables
 while [[ "$1" ]]; do
     case "$1" in
-        #"--no-preview") preview=false ;;
-        #"--no-color-code") write_color_code=false ;;
-        #"--rgb") color_type="rgb" ;;
-        #"--image-viewer") image_viewer="$2" ;;
-        #"--stdout") stdout=true ;;
-        "--version") echo $VERSION && exit ;;
-        "--help") show_help && exit ;;
+        -e | --encryption)
+            ENCRYPTION=$2
+            shift ;;
+        -d | --dir)
+            DIRREPO=$2
+            shift ;;
+        -c | --client)
+            CLIENT=$2
+            shift ;;
+        -v | --version)
+            echo $VERSION && exit ;;
+        -h | --help) show_help && exit ;;
+        * )
+            echo "Argumento invalido $1" ;;
     esac
     shift
 done
 
-#Solo aceptar de a un cliente a la vez?
-if [ $# -ne 1 ]; then
-    echo -e "${RED}Ingresar un solo argumento"
-    echo -e "${NORMAL}"
-    echo "$#"
-	show_help
-    exit 1
-fi
-
 #Correr funcion main
 main
+
+#Prueba variables
+echo $ENCRYPTION
+echo $DIRCUSTOM
