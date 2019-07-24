@@ -6,6 +6,7 @@
 #  /_____/\__,_/_/ /_/_/_/|_|   /____(_)_/ |_(_)_____(_)
 #
 # Creado por Pablo Ramos
+# https://gitlab.lunix.com.ar/pramos/borg_config
 #
 # Dependencies:
 #  borgbackup (https://github.com/borgbackup/borg)
@@ -18,13 +19,17 @@ ERROR=0
 BOLD=$(tput bold)
 NORMAL=$(tput sgr0)
 RED=$(tput setaf 1)
+YELLOW=$(tput setaf 3)
+
 
 #Variables de borg
 ENCRYPTION="repokey-blake2"
 DIRBASE="/u/borgbackup/"
 BORGUSER="admin"
-
-#echo "this is ${BOLD}bold${NORMAL} but this isn't"
+#Preferentemente configurar la variable SERVER con una IP fija.
+#Si no obtener IP principal del servidor local.
+#Esta IP no se utiliza en este script, se utiliza en el script del cliente
+SERVER=$(hostname -I | awk '{print $1}')
 
 show_help() {
     echo "uso: borg_config [--encryption ENCRIPTACION] [--dir DIRECTORIO] [--client CLIENTE]"
@@ -75,8 +80,22 @@ main() {
         echo "Corregir argumentos antes de volver a ejecutar.";
         exit;
     fi
+
     #Generar nueva llave SSH para el cliente
     ssh-keygen -t rsa -b 4096 -C "$CLIENT" -f /home/$BORGUSER/.ssh/$CLIENT -q -N ""
+    PUBKEY=$(cat /home/$BORGUSER/.ssh/$CLIENT.pub)
+
+    #Habilitar acceso al repositorio con la nueva llave
+    echo "#$CLIENT" >> /home/$BORGUSER/.ssh/authorized_keys
+    echo "command=\"borg serve --append-only --restrict-to-path $DIRREPO\" $PUBKEY" >> /home/$BORGUSER/.ssh/authorized_keys
+
+    #Generamos una passphrase random
+    PASS=$(openssl rand -base64 24)
+    echo "Utilizar passphrase: ${YELLOW}$PASS"
+    echo "${NORMAL}Si se utiliza otro passphrase, es necesario despues modificar el script cliente"
+
+    #Creamos el repositorio como el usuario que se va a utilizar para la conexion remota
+    su - $BORGUSER -c "borg init -e=$ENCRYPTION $DIRREPO"
 
 }
 
