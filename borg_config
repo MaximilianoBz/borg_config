@@ -73,6 +73,10 @@ main() {
         echo "${RED}Ya existe el repositorio $DIRREPO";
         ERROR=1;
     fi
+    if [ ! -e /etc/lunix/borg_client_template ]; then
+        echo "${RED}No existe el script base para cliente en /etc/lunix/borg_client_template";
+        ERROR=1;
+    fi
 
     #Si alguno de los chequeos anterior dio error, salir del script
     if [ $ERROR = 1 ]; then
