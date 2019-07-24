@@ -25,6 +25,7 @@ YELLOW=$(tput setaf 3)
 #Variables de borg
 ENCRYPTION="repokey-blake2"
 DIRBASE="/u/borgbackup/"
+DIRCONFIG="/etc/lunix/borg"
 BORGUSER="admin"
 #Preferentemente configurar la variable SERVER con una IP fija.
 #Si no obtener IP principal del servidor local.
@@ -60,21 +61,20 @@ main() {
     #Si no se ingreso un directorio. usar el por defecto
     if [ -z ${DIRREPO+x} ]; then
         DIRREPO=$DIRBASE$CLIENT;
-        echo $DIRREPO;
     fi
 
     #Comprobamos que no exista el repositorio ni la llave
 	#Comprobar tambien si existen archivos .pass y .key ?
-    if [ -e /home/$BORGUSER/.ssh/$CLIENT ]; then
-        echo "${RED}Ya existe la llave SSH /home/$BORGUSER/.ssh/$CLIENT";
+    if [ -e $DIRCONFIG/.ssh/$CLIENT ]; then
+        echo "${RED}Ya existe la llave SSH $DIRCONFIG/.ssh/$CLIENT";
         ERROR=1;
     fi
     if [ -e $DIRREPO ]; then
         echo "${RED}Ya existe el repositorio $DIRREPO";
         ERROR=1;
     fi
-    if [ ! -e /etc/lunix/borg_client_template ]; then
-        echo "${RED}No existe el script base para cliente en /etc/lunix/borg_client_template";
+    if [ ! -e $DIRCONFIG_client_template ]; then
+        echo "${RED}No existe el script base para cliente en $DIRCONFIG_client_template";
         ERROR=1;
     fi
 
@@ -87,14 +87,15 @@ main() {
     fi
 
     #Generar carpeta de configuracion si no existe
-    if [ ! -e /etc/lunix/borg/ ]; then
-        mkdir /etc/lunix/borg/ ;
-        chmod -R 600 /etc/lunix/borg/ ;
+    if [ ! -e $DIRCONFIG/ ]; then
+        mkdir $DIRCONFIG/ ;
+        mkdir $DIRCONFIG/.ssh/ ;
+        chmod -R 600 $DIRCONFIG/ ;
     fi
 
     #Generar nueva llave SSH para el cliente
-    ssh-keygen -t rsa -b 4096 -C "$CLIENT" -f /home/$BORGUSER/.ssh/$CLIENT -q -N ""
-    PUBKEY=$(cat /home/$BORGUSER/.ssh/$CLIENT.pub)
+    ssh-keygen -t rsa -b 4096 -C "$CLIENT" -f $DIRCONFIG/.ssh/$CLIENT -q -N ""
+    PUBKEY=$(cat $DIRCONFIG/.ssh/$CLIENT.pub)
 
     #Habilitar acceso al repositorio con la nueva llave
     echo "#$CLIENT" >> /home/$BORGUSER/.ssh/authorized_keys
@@ -104,18 +105,18 @@ main() {
     PASS=$(openssl rand -base64 24)
     echo "Utilizar passphrase: ${YELLOW}$PASS"
     echo "${NORMAL}Si se utiliza otro passphrase, es necesario despues modificar el script cliente"
-    echo $PASS > /etc/lunix/borg/$CLIENT.pass
+    echo $PASS > $DIRCONFIG/$CLIENT.pass
 
     #Creamos el repositorio como el usuario que se va a utilizar para la conexion remota
     su - $BORGUSER -c "borg init -e=$ENCRYPTION $DIRREPO"
 
     #Guardamos la key
-    borg key export $DIRREPO /etc/lunix/borg/$CLIENT.key
+    borg key export $DIRREPO $DIRCONFIG/$CLIENT.key
 
     #Generamos script basico para cliente
-    sed s/SRV_VAR/$SERVER/g /etc/lunix/borg_client_template > /etc/lunix/borg/$CLIENT.sh
-    sed -i s\#DIR_VAR\#$DIRREPO\#g /etc/lunix/borg/$CLIENT.sh
-    sed -i s\#PASS_VAR\#$PASS\#g /etc/lunix/borg/$CLIENT.sh
+    sed s/SRV_VAR/$SERVER/g $DIRCONFIG/borg_client_template > $DIRCONFIG/$CLIENT.sh
+    sed -i s\#DIR_VAR\#$DIRREPO\#g $DIRCONFIG/$CLIENT.sh
+    sed -i s\#PASS_VAR\#$PASS\#g $DIRCONFIG/$CLIENT.sh
 
 }
 
