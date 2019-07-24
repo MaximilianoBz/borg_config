@@ -11,6 +11,7 @@ Se debe correr desde el servidor.
 - Generar usuario "borg" y crear la carpeta /home/borg/.ssh (asegurarse que tenga permisos)
 
 ## Uso
+```
 borg_config [--encryption ENCRIPTACION] [--dir DIRECTORIO] [--client CLIENTE]
 
 argumentos opcionales:
@@ -18,4 +19,5 @@ argumentos opcionales:
    -e | --encryption          Encriptacion de repositorio (Default: repokey-blake2)
    -d | --dir                 Full path para el repositorio (Default: nombre del cliente dentro de /u/borgbackup/)
    -h | --help                Muestra este mensaje
-   -v | --version             Muestra la version del script<Paste>
+   -v | --version             Muestra la version del script
+```
