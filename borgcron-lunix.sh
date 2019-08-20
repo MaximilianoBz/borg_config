@@ -15,8 +15,8 @@ RUN_PID_DIR="/var/run/borg"
 # basic, required information
 BACKUP_NAME='FULL' # name for this backup, avoid spaces
 export BORG_RSH='ssh -oBatchMode=yes'
-export BORG_REPO='ssh://borg@borg.lunix.com.ar:22/u/borgbackup/repo4-test'
-export BORG_PASSPHRASE='eP&2yAdFg55o^jw8LWK9EnUc'
+export BORG_REPO='ssh://borg@SRV_VAR:22DIR_VAR'
+export BORG_PASSPHRASE='PASS_VAR'
 ARCHIVE_NAME="{hostname}-$BACKUP_NAME-{now:%Y-%m-%dT%H:%M}" # or %Y-%m-%d
 
 #Directorios del backup
