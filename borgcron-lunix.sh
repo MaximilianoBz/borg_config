@@ -7,18 +7,20 @@
 setopt shwordsplit 2>/dev/null
 
 BORG_BIN="borg"
-LAST_BACKUP_DIR="/var/run/borg/last"
-RUN_PID_DIR="/var/run/borg/borg"
+LAST_BACKUP_DIR="/var/log/borg/last"
+LOG_FILE="/var/log/borg/borgbackup.log"
+RUN_PID_DIR="/var/run/borg"
 
 #Variables
 # basic, required information
 BACKUP_NAME='FULL' # name for this backup, avoid spaces
-#export BORG_REPO='borg@borg.lunix.com.ar:/u/borgbackup/repo4-test'
-export BORG_REPO='ssh://borg@SRV_VAR:22DIR_VAR'
-export BORG_PASSPHRASE='PASS_VAR'
-ARCHIVE_NAME="{hostname}-$BACKUP_NAME-{now:%Y-%m-%dT%H:%M:%S}" # or %Y-%m-%d
-BACKUP_DIRS="/etc"
-#BACKUP_DIRS="/etc /home /root /var /u"
+export BORG_RSH='ssh -oBatchMode=yes'
+export BORG_REPO='ssh://borg@borg.lunix.com.ar:22/u/borgbackup/repo4-test'
+export BORG_PASSPHRASE='eP&2yAdFg55o^jw8LWK9EnUc'
+ARCHIVE_NAME="{hostname}-$BACKUP_NAME-{now:%Y-%m-%dT%H:%M}" # or %Y-%m-%d
+
+#Directorios del backup
+BACKUP_DIRS="/etc /var/spool/cron /usr/local" #DEFAULT LINUX
 
 # default settings for backup
 COMPRESSION="lz4"
@@ -30,7 +32,10 @@ RETRY_NUM="3"
 # recommend to leave it as it is. Otherwise comment it out to disable pruning
 # or – if you really want to remove the prefix – set it to an empty string.
 PRUNE_PREFIX="{hostname}-$BACKUP_NAME-"
-PRUNE_PARAMS="--keep-daily=61 --keep-weekly=8 --keep-monthly=6 --keep-yearly=0"
+PRUNE_PARAMS="--keep-daily=31 --keep-weekly=8 --keep-monthly=2 --keep-yearly=0"
+
+# Tiempo max entre backups antes que envie alerta
+CRITICAL_TIME=$(( 48*60*60 )) # 48h
 
 # set placeholder/default value
 #PRUNE_PREFIX="null"
@@ -96,16 +101,16 @@ log_line() {
 	echo "[$( date +'%F %T' )]"
 }
 info_log() {
-	echo "$( log_line ) $*" >> /var/log/borgbackup.log
+	echo "$( log_line ) $*" >> $LOG_FILE
 	echo "$( log_line ) $*" >&1
 }
 empty_line_log() {
-	echo >> /var/log/borgbackup.log
+	echo >> $LOG_FILE
 	echo >&1
 }
 error_log() {
-	echo "$( log_line ) $*" >> /var/log/borgbackup.log
-	echo "$( log_line ) $*" >&2
+	echo "$( log_line ) ERROR: $*" >> $LOG_FILE
+	echo "$( log_line ) ERROR: $*" >&2
 }
 
 # Evaluate whether the backup is locked.
@@ -262,6 +267,7 @@ getInfoAboutLastBackup() {
 # add trap to catch backup interruptions
 trapterm() {
 	rm_lock 2> /dev/null
+	echo "0" > /etc/lunix/borg_status
 	error_log "Backup $BACKUP_NAME (PID: $$) interrupted by $1."
 	exit 2
 }
@@ -270,6 +276,11 @@ trap 'trapterm TERM' TERM
 
 # Agregamos bandera para zabbix
 echo "0" > /etc/lunix/borg_status
+
+# Crear directorio si no existe
+if [ ! -d $LAST_BACKUP_DIR ]; then
+	mkdir -p $LAST_BACKUP_DIR
+fi
 
 # check lock
 if is_lock; then
@@ -307,7 +318,7 @@ for i in $( seq "$(( RETRY_NUM+1 ))" ); do
 		--compression "$COMPRESSION" \
 		$ADD_BACKUP_PARAMS \
 		"::$ARCHIVE_NAME" \
-		$BACKUP_DIRS 2>> /var/log/borgbackup.log
+		$BACKUP_DIRS 2>> $LOG_FILE
 
 	# check return code
 	exitcode_create=$?
@@ -351,7 +362,7 @@ if [ "$PRUNE_PARAMS" ] && [ "$PRUNE_PREFIX" != "null" ] && [ "$exitcode" -lt 2 ]
 
 		# run prune
 		# shellcheck disable=SC2086
-		$BORG_BIN prune -v --stats --list --prefix "$PRUNE_PREFIX" $PRUNE_PARAMS 2>> /var/log/borgbackup.log
+		$BORG_BIN prune -v --stats --list --prefix "$PRUNE_PREFIX" $PRUNE_PARAMS 2>> $LOG_FILE
 
 		# check return code
 		exitcode_prune=$?
@@ -377,6 +388,29 @@ if [ "$exitcode" -ne 0 ]; then
 	error_log "Backup \"$BACKUP_NAME\" ended, but it seems something went wrong."
 else
 	info_log "Backup \"$BACKUP_NAME\" ended successfully."
+fi
+
+#Check last backup
+dir_contains_files() {
+	ls -A "$1"
+}
+
+# check for borg backup notes
+if [ -d "$LAST_BACKUP_DIR" ] && [ "$( dir_contains_files $LAST_BACKUP_DIR )" ]; then
+	for file in "$LAST_BACKUP_DIR"/*; do
+		name=$( basename "$file" .time )
+		time=$( cat "$file" )
+		relvtime=$(( $(date +%s) - time ))
+
+		if [ "$relvtime" -ge "$CRITICAL_TIME" ]; then
+            mail -s "Backup desactualizado en {hostname}" ingenieria@lunix.com.ar < echo "WARNING: The borg backup named \"$name\" is outdated. Last successful execution: $( date --date=@"$time" +'%A, %F %T' )"
+            error_log "WARNING: The borg backup named \"$name\" is outdated."
+			error_log "         Last successful execution: $( date --date=@"$time" +'%A, %F %T' )"
+		fi
+	done
+else
+	error_log "ERROR: No borg backup 'last' dir…"
+	echo "0" > /etc/lunix/borg_status
 fi
 
 exit "$exitcode"
