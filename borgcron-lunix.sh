@@ -12,7 +12,7 @@ source /etc/lunix/borg/borg.conf
 #Variables
 # basic, required information
 export BORG_RSH='ssh -oBatchMode=yes'
-export BORG_REPO="ssh://$USER@$SERVER:22$REPO"
+export BORG_REPO="ssh://$USER@$SERVER:$PORT$REPO"
 export BORG_PASSPHRASE="$REPO_PASS"
 ARCHIVE_NAME="{hostname}-$BACKUP_NAME-{now:%Y-%m-%dT%H:%M}" # or %Y-%m-%d
 
@@ -20,9 +20,6 @@ ARCHIVE_NAME="{hostname}-$BACKUP_NAME-{now:%Y-%m-%dT%H:%M}" # or %Y-%m-%d
 # recommend to leave it as it is. Otherwise comment it out to disable pruning
 # or – if you really want to remove the prefix – set it to an empty string.
 PRUNE_PREFIX="{hostname}-$BACKUP_NAME-"
-
-# Tiempo max entre backups antes que envie alerta
-CRITICAL_TIME=$(( 48*60*60 )) # 48h
 
 # set placeholder/default value
 #PRUNE_PREFIX="null"

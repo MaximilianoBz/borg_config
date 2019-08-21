@@ -11,7 +11,7 @@
 # Dependencies:
 #  borgbackup (https://github.com/borgbackup/borg)
 
-VERSION="1.0"
+VERSION="1.0.1"
 DIR=/tmp/
 ERROR=0
 
@@ -82,7 +82,7 @@ main() {
     if [ $ERROR = 1 ]; then
         echo "${NORMAL}";
         echo "Se detuvo el script sin generar ninguna configuracion";
-        echo "Corregir argumentos antes de volver a ejecutar.";
+        echo "Corregir argumentos y volver a ejecutar.";
         exit;
     fi
 
@@ -104,7 +104,7 @@ main() {
     #Generamos una passphrase random y la guardamos
     PASS=$(openssl rand -base64 24)
     echo "Utilizar passphrase: ${YELLOW}$PASS"
-    echo "${NORMAL}Si se utiliza otro passphrase, es necesario despues modificar el script cliente"
+    echo "${NORMAL}Si se utiliza otro passphrase, es necesario despues modificar la configuración del cliente"
     echo $PASS > $DIRCONFIG/$CLIENT.pass
 
     #Creamos el repositorio como el usuario que se va a utilizar para la conexion remota
