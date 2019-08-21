@@ -1,0 +1,100 @@
+#!/usr/bin/env bash
+#      __                _         _____   ____    __
+#     / /   __  ______  (_)  __   / ___/  / __ \  / /
+#    / /   / / / / __ \/ / |/_/   \__ \  / /_/ / / /
+#   / /___/ /_/ / / / / />  <    ___/ / / _, _/ / /____
+#  /_____/\__,_/_/ /_/_/_/|_|   /____(_)_/ |_(_)_____(_)
+#
+# Creado por Pablo Ramos
+# https://gitlab.lunix.com.ar/pramos/borg_config
+#
+# Dependencies:
+#  borgbackup (https://github.com/borgbackup/borg)
+    
+VERSION="0.1"
+DIR=/tmp/
+ERROR=0
+CONFIG="/etc/lunix/borg/borg.conf"
+
+#Colores de texto
+BOLD=$(tput bold)
+NORMAL=$(tput sgr0)
+RED=$(tput setaf 1)
+YELLOW=$(tput setaf 3)
+
+
+show_help() {
+    echo "uso: borg_tools"
+    echo " "
+    echo "${BOLD}borg_tools"
+    echo "Herramienta de utilidades para borg de Lunix S.R.L."
+    echo "Se ejecuta en un cliente con un archivo de configuración presente"
+    echo "o indicando el archivo de configuración de forma manual"
+    echo ""
+    echo "${NORMAL}argumentos opcionales:"
+    echo "   -c | --config              Utiliza el archivo de configuración"
+    echo "                              especificado en lugar del por defecto"
+    echo "   -h | --help                Muestra este mensaje"
+    echo "   -v | --version             Muestra la version del script"
+}
+
+main_loop() {
+    echo "1) Información del repositorio"
+    echo "2) Listar los ultimos 10 archivos"
+    echo "3) Extraer el contenido de un archivo"
+    echo "4) Montar un archivo"
+    echo "5) Desmontar un archivo"
+    echo "6) Chequear el repositorio"
+    echo "6) Salir"
+    read -p "Opción (1-6): " OPT
+    case $OPT in
+        1)
+            borg info ;;
+        2)
+            borg list --last 5 --short ;;
+        6)
+            exit ;;
+        *)
+            echo "Opción no valida" && exit ;;
+    esac
+}
+
+main() {
+
+    #Comprobar que este instalado borg
+    BORG=$(command -v borg)
+    [[ ${#BORG} -eq 0 ]] && echo "${RED}Es necesario instalar borgbackup" && exit;
+
+    #Leemos variables de borg.conf
+    if [ -e $CONFIG ]; then
+        source $CONFIG
+    else
+        echo "${RED}No existe el archivo de configuración $CONFIG"
+        exit;
+    fi
+
+    export BORG_RSH='ssh -oBatchMode=yes -oStrictHostKeyChecking=no'
+    export BORG_REPO="ssh://$USER@$SERVER:$PORT$REPO"
+    export BORG_PASSPHRASE="$REPO_PASS"
+
+    main_loop
+
+}
+
+#Asignamos argumentos a variables
+while [[ "$1" ]]; do
+    case "$1" in
+         -c | --config)
+            CONFIG=$2
+            shift ;;
+        -v | --version)
+            echo $VERSION && exit ;;
+        -h | --help) show_help && exit ;;
+        * )
+            echo "Argumento invalido $1" && exit ;;
+    esac
+    shift
+done
+
+#Correr funcion main
+main

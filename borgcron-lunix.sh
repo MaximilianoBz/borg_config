@@ -14,12 +14,12 @@ source /etc/lunix/borg/borg.conf
 export BORG_RSH='ssh -oBatchMode=yes -oStrictHostKeyChecking=no'
 export BORG_REPO="ssh://$USER@$SERVER:$PORT$REPO"
 export BORG_PASSPHRASE="$REPO_PASS"
-ARCHIVE_NAME="{hostname}-$BACKUP_NAME-{now:%Y-%m-%dT%H:%M}" # or %Y-%m-%d
+ARCHIVE_NAME="{fqdn}-$BACKUP_NAME-{now:%Y-%m-%dT%H:%M}" # or %Y-%m-%d
 
 # The prefix makes sure only backups from this backup config are pruned. It is
 # recommend to leave it as it is. Otherwise comment it out to disable pruning
 # or – if you really want to remove the prefix – set it to an empty string.
-PRUNE_PREFIX="{hostname}-$BACKUP_NAME-"
+PRUNE_PREFIX="{fqdn}-$BACKUP_NAME-"
 
 # set placeholder/default value
 #PRUNE_PREFIX="null"
@@ -387,7 +387,7 @@ if [ -d "$LAST_BACKUP_DIR" ] && [ "$( dir_contains_files $LAST_BACKUP_DIR )" ]; 
 		relvtime=$(( $(date +%s) - time ))
 
 		if [ "$relvtime" -ge "$CRITICAL_TIME" ]; then
-            mail -s "Backup desactualizado en {hostname}" ingenieria@lunix.com.ar < echo "WARNING: The borg backup named \"$name\" is outdated. Last successful execution: $( date --date=@"$time" +'%A, %F %T' )"
+            mail -s "Backup desactualizado en $( hostname --fqdn )" ingenieria@lunix.com.ar < echo "WARNING: The borg backup named \"$name\" is outdated. Last successful execution: $( date --date=@"$time" +'%A, %F %T' )"
             error_log "WARNING: The borg backup named \"$name\" is outdated."
 			error_log "         Last successful execution: $( date --date=@"$time" +'%A, %F %T' )"
 		fi

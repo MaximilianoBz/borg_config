@@ -27,6 +27,7 @@ ENCRYPTION="repokey-blake2"
 DIRBASE="/u/borgbackup/"
 DIRCONFIG="/etc/lunix/borg"
 BORGUSER="borg"
+
 #Preferentemente configurar la variable SERVER con una IP fija.
 #Si no obtener IP principal del servidor local.
 #Esta IP no se utiliza en este script, se utiliza en el script del cliente
