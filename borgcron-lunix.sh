@@ -11,7 +11,7 @@ source /etc/lunix/borg/borg.conf
 
 #Variables
 # basic, required information
-export BORG_RSH='ssh -oBatchMode=yes'
+export BORG_RSH='ssh -oBatchMode=yes -oStrictHostKeyChecking=no'
 export BORG_REPO="ssh://$USER@$SERVER:$PORT$REPO"
 export BORG_PASSPHRASE="$REPO_PASS"
 ARCHIVE_NAME="{hostname}-$BACKUP_NAME-{now:%Y-%m-%dT%H:%M}" # or %Y-%m-%d
