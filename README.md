@@ -1,4 +1,4 @@
-Script para agregar nuevos repositorios en un servidor borgbackup. Genera también el script que se debe copiar al cliente.
+Script para agregar nuevos repositorios en un servidor BorgBackup. Genera también el script que se debe copiar al cliente.
 
 Se debe correr desde el servidor.
 
@@ -10,7 +10,7 @@ Se debe correr desde el servidor.
 - Copiar borg_config en /usr/local/sbin/ y hacer ejecutable
 - Generar el directorio /etc/lunix/borg y /etc/lunix/borg/.ssh con permisos 600 para root
 - Copiar borg_client.conf en /etc/lunix/borg/borg_client.conf
-- Generar usuario "borg" y crear la carpeta /home/borg/.ssh (asegurarse que tenga permisos)
+- Generar usuario "borg" y crear la carpeta /home/borg/.ssh
 
 ## Uso
 ```
