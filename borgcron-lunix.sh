@@ -6,33 +6,20 @@
 # but we need it
 setopt shwordsplit 2>/dev/null
 
-BORG_BIN="borg"
-LAST_BACKUP_DIR="/var/log/borg/last"
-LOG_FILE="/var/log/borg/borgbackup.log"
-RUN_PID_DIR="/var/run/borg"
+#Leemos variables de borg.conf
+source /etc/lunix/borg/borg.conf
 
 #Variables
 # basic, required information
-BACKUP_NAME='FULL' # name for this backup, avoid spaces
 export BORG_RSH='ssh -oBatchMode=yes'
-export BORG_REPO='ssh://borg@SRV_VAR:22DIR_VAR'
-export BORG_PASSPHRASE='PASS_VAR'
+export BORG_REPO="ssh://$USER@$SERVER:22$REPO"
+export BORG_PASSPHRASE="$REPO_PASS"
 ARCHIVE_NAME="{hostname}-$BACKUP_NAME-{now:%Y-%m-%dT%H:%M}" # or %Y-%m-%d
-
-#Directorios del backup
-BACKUP_DIRS="/etc /var/spool/cron /usr/local" #DEFAULT LINUX
-
-# default settings for backup
-COMPRESSION="lz4"
-ADD_BACKUP_PARAMS="--exclude-caches --exclude '/home/*/.cache/*' --exclude '/var/cache/*' --exclude '/var/tmp/*'"
-SLEEP_TIME="5m"
-RETRY_NUM="3"
 
 # The prefix makes sure only backups from this backup config are pruned. It is
 # recommend to leave it as it is. Otherwise comment it out to disable pruning
 # or – if you really want to remove the prefix – set it to an empty string.
 PRUNE_PREFIX="{hostname}-$BACKUP_NAME-"
-PRUNE_PARAMS="--keep-daily=31 --keep-weekly=8 --keep-monthly=2 --keep-yearly=0"
 
 # Tiempo max entre backups antes que envie alerta
 CRITICAL_TIME=$(( 48*60*60 )) # 48h

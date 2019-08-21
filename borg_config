@@ -114,14 +114,15 @@ main() {
     borg key export $DIRREPO $DIRCONFIG/$CLIENT.key
 
     #Generamos script basico para cliente
-    sed s/SRV_VAR/$SERVER/g $DIRCONFIG/borg_client_template > $DIRCONFIG/$CLIENT.sh
-    sed -i s\#DIR_VAR\#$DIRREPO\#g $DIRCONFIG/$CLIENT.sh
-    sed -i s\#PASS_VAR\#$PASS\#g $DIRCONFIG/$CLIENT.sh
+    sed s/SRV_VAR/$SERVER/g $DIRCONFIG/borg_client.conf > $DIRCONFIG/$CLIENT.conf
+    sed -i s\#DIR_VAR\#$DIRREPO\#g $DIRCONFIG/$CLIENT.conf
+    sed -i s\#PASS_VAR\#$PASS\#g $DIRCONFIG/$CLIENT.conf
+    sed -i s\#CLIENT_VAR\#$CLIENT\#g $DIRCONFIG/$CLIENT.conf
 
     #Instrucciones para cliente
     echo "${BOLD}Instalación en cliente:"
     echo "Copiar la llave privada $DIRCONFIG/.ssh/$CLIENT en el cliente dentro de /root/.ssh/id_rsa"
-    echo "Copiar el script $DIRCONFIG/$CLIENT.sh en el cliente dentro de /usr/local/sbin/borg-client"
+    echo "Copiar la configuración $DIRCONFIG/$CLIENT.conf en el cliente como /etc/lunix/borg/borg.conf"
     echo "Hacer ejecutable el script en el cliente"
     echo "Modificar las carpetas en el script de ser necesario"
     echo "Agregar el script en crontab:"
