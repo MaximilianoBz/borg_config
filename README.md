@@ -6,7 +6,7 @@ Se debe correr desde el servidor.
 - ```borgbackup```
 
 ## Instalacion
-- Configurar en el script borg_config la variable SERVER con la IP del servidor y la variable DIRBASE con el directorio donde se generaran los repositorios
+- Configurar en el script borg_config la variable SERVER con la IP del servidor, la variable PORT con el puerto de conexiones SSH externas y la variable DIRBASE con el directorio donde se generaran los repositorios
 - Copiar borg_config en /usr/local/sbin/ y hacer ejecutable
 - Generar el directorio /etc/lunix/borg y /etc/lunix/borg/.ssh con permisos 600 para root
 - Copiar borg_client.conf en /etc/lunix/borg/borg_client.conf

@@ -31,6 +31,8 @@ BORGUSER="borg"
 #Si no obtener IP principal del servidor local.
 #Esta IP no se utiliza en este script, se utiliza en el script del cliente
 SERVER=$(hostname -I | awk '{print $1}')
+#Puerto para conexión SSH desde los clientes
+PORT="22"
 
 show_help() {
     echo "uso: borg_config [--encryption ENCRIPTACION] [--dir DIRECTORIO] [--client CLIENTE]"
@@ -116,6 +118,7 @@ main() {
     #Generamos script basico para cliente
     sed s/SRV_VAR/$SERVER/g $DIRCONFIG/borg_client.conf > $DIRCONFIG/$CLIENT.conf
     sed -i s\#DIR_VAR\#$DIRREPO\#g $DIRCONFIG/$CLIENT.conf
+    sed -i s\#PORT_VAR\#$PORT\#g $DIRCONFIG/$CLIENT.conf
     sed -i s\#PASS_VAR\#$PASS\#g $DIRCONFIG/$CLIENT.conf
     sed -i s\#CLIENT_VAR\#$CLIENT\#g $DIRCONFIG/$CLIENT.conf
 
