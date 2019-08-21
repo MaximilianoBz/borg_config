@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 # Script para backups programados de borg
 # Version modificada de borg-cron-helper https://github.com/rugk/borg-cron-helper
 

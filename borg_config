@@ -73,8 +73,8 @@ main() {
         echo "${RED}Ya existe el repositorio $DIRREPO";
         ERROR=1;
     fi
-    if [ ! -e $DIRCONFIG/borg_client_template ]; then
-        echo "${RED}No existe el script base para cliente en $DIRCONFIG/borg_client_template";
+    if [ ! -e $DIRCONFIG/borg_client.conf ]; then
+        echo "${RED}No existe la configuración base para cliente en $DIRCONFIG/borg_client.conf";
         ERROR=1;
     fi
 
@@ -99,7 +99,7 @@ main() {
 
     #Habilitar acceso al repositorio con la nueva llave
     echo "#$CLIENT" >> /home/$BORGUSER/.ssh/authorized_keys
-    echo "command=\"borg serve --append-only --restrict-to-path $DIRREPO/\" $PUBKEY" >> /home/$BORGUSER/.ssh/authorized_keys
+    echo "command=\"borg serve --append-only --restrict-to-path $DIRREPO/\",no-pty,no-agent-forwarding,no-port-forwarding,no-X11-forwarding,no-user-rc $PUBKEY" >> /home/$BORGUSER/.ssh/authorized_keys
 
     #Generamos una passphrase random y la guardamos
     PASS=$(openssl rand -base64 24)
@@ -120,13 +120,18 @@ main() {
     sed -i s\#CLIENT_VAR\#$CLIENT\#g $DIRCONFIG/$CLIENT.conf
 
     #Instrucciones para cliente
+    echo ""
+    echo ""
     echo "${BOLD}Instalación en cliente:"
-    echo "Copiar la llave privada $DIRCONFIG/.ssh/$CLIENT en el cliente dentro de /root/.ssh/id_rsa"
+    echo "Copiar la llave privada $DIRCONFIG/.ssh/$CLIENT en el cliente dentro de /root/.ssh/$CLIENT"
+    echo "Generar o modificar el archivo /root/.ssh/config en el cliente con el contenido:"
+    echo "Host $SERVER"
+    echo "  IdentityFile /root/.ssh/$CLIENT"
     echo "Copiar la configuración $DIRCONFIG/$CLIENT.conf en el cliente como /etc/lunix/borg/borg.conf"
-    echo "Hacer ejecutable el script en el cliente"
-    echo "Modificar las carpetas en el script de ser necesario"
+    echo "Descargar borgcron-lunix.sh en el cliente en /etc/lunix/borg/borgcron-lunix.sh"
+    echo "Modificar los directorios en la configuracin de ser necesario"
     echo "Agregar el script en crontab:"
-    echo "0 0 * * * /usr/local/sbin/borg-client"
+    echo "0 0 * * * /etc/lunix/borg/borgcron-lunix.sh"
 
 }
 
