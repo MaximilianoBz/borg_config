@@ -22,6 +22,9 @@ NORMAL=$(tput sgr0)
 RED=$(tput setaf 1)
 YELLOW=$(tput setaf 3)
 
+#Numeros
+NUM_CHECK='^[0-9]+$'
+
 
 show_help() {
     echo "uso: borg_tools"
@@ -40,18 +43,18 @@ show_help() {
 
 main_loop() {
     echo "1) Información del repositorio"
-    echo "2) Listar los ultimos 10 archivos"
-    echo "3) Extraer el contenido de un archivo"
-    echo "4) Montar un archivo"
-    echo "5) Desmontar un archivo"
+    echo "2) Listar los ultimos 10 backups"
+    echo "3) Extraer el contenido de un backup"
+    echo "4) Montar un backup"
+    echo "5) Desmontar un backup"
     echo "6) Chequear el repositorio"
     echo "6) Salir"
     read -p "Opción (1-6): " OPT
     case $OPT in
         1)
-            borg info ;;
+            $BORG_BIN info ;;
         2)
-            borg list --last 5 --short ;;
+            $BORG_BIN list --last 10 --short ;;
         6)
             exit ;;
         *)
@@ -59,11 +62,39 @@ main_loop() {
     esac
 }
 
+borg_info() {
+    if [ -z $INFO_ARG ]; then
+        $BORG_BIN info
+    else
+        $BORG_BIN info $BORG_REPO::$INFO_ARG
+    fi
+}
+
+borg_list() {
+    if [ -z $LIST_ARG ]; then
+        $BORG_BIN list --last 5
+    else
+        if [[ $LIST_ARG =~ $NUM_CHECK ]]; then
+            $BORG_BIN list --last $LIST_ARG
+        else 
+            echo "El argumento de ${RED}list ${NORMAL}debe ser un numero"
+        fi
+    fi
+}
+
+borg_mount() {
+    if [ -z $MOUNT_ARG ]; then
+        MOUNT_ARG=$( $BORG_BIN list --last 1 --short )
+        $BORG_BIN mount $BORG_REPO::$MOUNT_ARG /tmp/$MOUNT_ARG
+    else
+        $BORG_BIN mount $BORG_REPO::$MOUNT_ARG /tmp/$MOUNT_ARG
+    fi
+}
+
 main() {
 
-    #Comprobar que este instalado borg
-    BORG=$(command -v borg)
-    [[ ${#BORG} -eq 0 ]] && echo "${RED}Es necesario instalar borgbackup" && exit;
+    #Comprobar que este definido borg
+    [[ ${#BORG_BIN} -eq 0 ]] && echo "${RED}Es necesario definir el ejecutable de borg" && exit;
 
     #Leemos variables de borg.conf
     if [ -e $CONFIG ]; then
@@ -87,10 +118,23 @@ while [[ "$1" ]]; do
          -c | --config)
             CONFIG=$2
             shift ;;
+        info )
+            INFO_ARG=$2
+            borg_info
+            exit ;;
+        list )
+            LIST_ARG=$2
+            borg_list
+            exit ;;
+        mount )
+            MOUNT_ARG=$2
+            borg_mount
+            exit ;;
         -v | --version)
             echo $VERSION && exit ;;
-        -h | --help) show_help && exit ;;
-        * )
+        -h | --help)
+            show_help && exit ;;
+        -* )
             echo "Argumento invalido $1" && exit ;;
     esac
     shift
