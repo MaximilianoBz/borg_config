@@ -9,6 +9,17 @@ setopt shwordsplit 2>/dev/null
 #Leemos variables de borg.conf
 source /etc/lunix/borg/borg.conf
 
+#Sobreescribimos configuración si se indica otro archivo
+while [[ "$1" ]]; do
+    case "$1" in
+         -c | --config)
+            CONFIG=$2
+			source $CONFIG
+            shift ;;
+    esac
+    shift
+done
+
 #Variables
 # basic, required information
 export BORG_RSH='ssh -oBatchMode=yes -oStrictHostKeyChecking=no'

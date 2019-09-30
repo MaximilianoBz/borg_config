@@ -11,7 +11,7 @@
 # Dependencies:
 #  borgbackup (https://github.com/borgbackup/borg)
     
-VERSION="0.1"
+VERSION="1.0"
 DIR=/tmp/
 ERROR=0
 CONFIG="/etc/lunix/borg/borg.conf"
@@ -41,27 +41,6 @@ show_help() {
     echo "   -v | --version             Muestra la version del script"
 }
 
-main_loop() {
-    echo "1) Información del repositorio"
-    echo "2) Listar los ultimos 10 backups"
-    echo "3) Extraer el contenido de un backup"
-    echo "4) Montar un backup"
-    echo "5) Desmontar un backup"
-    echo "6) Chequear el repositorio"
-    echo "6) Salir"
-    read -p "Opción (1-6): " OPT
-    case $OPT in
-        1)
-            $BORG_BIN info ;;
-        2)
-            $BORG_BIN list --last 10 --short ;;
-        6)
-            exit ;;
-        *)
-            echo "Opción no valida" && exit ;;
-    esac
-}
-
 borg_info() {
     if [ -z $INFO_ARG ]; then
         $BORG_BIN info
@@ -72,29 +51,86 @@ borg_info() {
 
 borg_list() {
     if [ -z $LIST_ARG ]; then
-        $BORG_BIN list --last 5
+        $BORG_BIN list --last 10
     else
         if [[ $LIST_ARG =~ $NUM_CHECK ]]; then
             $BORG_BIN list --last $LIST_ARG
         else 
-            echo "El argumento de ${RED}list ${NORMAL}debe ser un numero"
+            echo "El argumento de ${BOLD}list ${NORMAL}debe ser un numero"
         fi
     fi
 }
 
 borg_mount() {
-    if [ -z $MOUNT_ARG ]; then
+    if [ -z "$MOUNT_ARG" ]; then
         MOUNT_ARG=$( $BORG_BIN list --last 1 --short )
+        if [ ! -d "/tmp/$MOUNT_ARG" ]; then mkdir /tmp/$MOUNT_ARG; fi
         $BORG_BIN mount $BORG_REPO::$MOUNT_ARG /tmp/$MOUNT_ARG
+        echo "Montaje realizado en /tmp/$MOUNT_ARG"
     else
-        $BORG_BIN mount $BORG_REPO::$MOUNT_ARG /tmp/$MOUNT_ARG
+        if [ -z "$MOUNT_DEST" ]; then
+            MOUNT_DEST="/tmp/$MOUNT_ARG"
+            if [ ! -d "$MOUNT_DEST" ]; then mkdir $MOUNT_DEST; fi
+            $BORG_BIN mount $BORG_REPO::$MOUNT_ARG $MOUNT_DEST
+            echo "Montaje realizado en $MOUNT_DEST"
+        else
+            if [ ! -d "$MOUNT_DEST" ]; then mkdir $MOUNT_DEST; fi
+            $BORG_BIN mount $BORG_REPO::$MOUNT_ARG $MOUNT_DEST
+            echo "Montaje realizado en $MOUNT_DEST"
+        fi
     fi
 }
 
-main() {
+borg_umount() {
+    if [ -z $UMOUNT_DEST ]; then
+        echo "${RED}Es necesario indicar la carpeta a desmontar"
+        exit 2;
+    else
+        $BORG_BIN umount $UMOUNT_DEST
+    fi
+}
 
-    #Comprobar que este definido borg
-    [[ ${#BORG_BIN} -eq 0 ]] && echo "${RED}Es necesario definir el ejecutable de borg" && exit;
+borg_check() {
+    if [ -z $CHECK_ARG ]; then
+        $BORG_BIN check -p $BORG_REPO
+    else
+        $BORG_BIN check -p $BORG_REPO::$CHECK_ARG
+    fi
+}
+
+show_menu() {
+while true; do
+    echo "1) Información del repositorio"
+    echo "2) Listar los ultimos 10 backups"
+    echo "3) Extraer el contenido de un backup"
+    echo "4) Montar un backup"
+    echo "5) Desmontar un backup"
+    echo "6) Chequear el repositorio"
+    echo "7) Salir"
+    read -p "Opción (1-7): " OPT
+    case $OPT in
+        1)
+            borg_info ;;
+        2)
+            borg_list ;;
+        4)
+            read -p "Ingrese nombre del archivo o deje vacio para montar el ultimo:" MOUNT_ARG;
+            read -p "Ingrese carpeta de destino:" MOUNT_DEST;
+            borg_mount ;;
+        5) 
+            read -p "Ingrese carpeta a desmontar:" UMOUNT_DEST;
+            borg_umount ;;
+        6) 
+            borg_check ;;
+        7)
+            exit ;;
+        *)
+            echo "${RED}Opción no valida ${NORMAL}" ;;
+    esac
+done
+}
+
+main() {
 
     #Leemos variables de borg.conf
     if [ -e $CONFIG ]; then
@@ -104,41 +140,56 @@ main() {
         exit;
     fi
 
+    #Comprobar que este definido borg
+    [[ ${#BORG_BIN} -eq 0 ]] && echo "${RED}Es necesario definir el ejecutable de borg" && exit;
+
     export BORG_RSH='ssh -oBatchMode=yes -oStrictHostKeyChecking=no'
     export BORG_REPO="ssh://$USER@$SERVER:$PORT$REPO"
     export BORG_PASSPHRASE="$REPO_PASS"
 
-    main_loop
-
 }
 
-#Asignamos argumentos a variables
-while [[ "$1" ]]; do
-    case "$1" in
-         -c | --config)
-            CONFIG=$2
-            shift ;;
-        info )
-            INFO_ARG=$2
-            borg_info
-            exit ;;
-        list )
-            LIST_ARG=$2
-            borg_list
-            exit ;;
-        mount )
-            MOUNT_ARG=$2
-            borg_mount
-            exit ;;
-        -v | --version)
-            echo $VERSION && exit ;;
-        -h | --help)
-            show_help && exit ;;
-        -* )
-            echo "Argumento invalido $1" && exit ;;
-    esac
-    shift
-done
-
-#Correr funcion main
+#Cargamos variables
 main
+
+#Si no hay argumentos, mostrar menu
+if [ $# -eq 0 ]; then
+    show_menu ;
+    exit ;
+else
+    #Asignamos argumentos a variables
+    while [[ "$1" ]]; do
+        case "$1" in
+            -c | --config)
+                CONFIG=$2
+                shift ;;
+            info )
+                INFO_ARG=$2
+                borg_info
+                exit ;;
+            list )
+                LIST_ARG=$2
+                borg_list
+                exit ;;
+            mount )
+                MOUNT_ARG=$2
+                MOUNT_DEST=$3
+                borg_mount
+                exit ;;
+            umount )
+                UMOUNT_DEST=$2
+                burg_umount
+                exit ;;
+            -v | --version)
+                echo $VERSION && exit ;;
+            -h | --help)
+                show_help && exit ;;
+            -* )
+                echo "Argumento invalido $1" && exit ;;
+        esac
+        shift
+    done
+fi
+
+#Mostar menu?
+show_menu
