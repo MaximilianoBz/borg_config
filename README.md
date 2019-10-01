@@ -23,3 +23,7 @@ argumentos opcionales:
    -h | --help                Muestra este mensaje
    -v | --version             Muestra la version del script
 ```
+
+## PENDIENTES
+- Horarios para backups. Generados al azar?
+- Multiples configuraciones (1 local, 1 lunix, etc)
