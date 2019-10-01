@@ -135,8 +135,8 @@ main() {
     echo "  IdentityFile /root/.ssh/$CLIENT"
     echo "${NORMAL} ${BOLD}"
     echo "Copiar la configuración $DIRCONFIG/$CLIENT.conf en el cliente como /etc/lunix/borg/borg.conf"
-    echo "Descargar borgcron-lunix.sh en el cliente en /etc/lunix/borg/borgcron-lunix.sh"
     echo "Modificar los directorios en la configuracin de ser necesario"
+    echo "Descargar borgcron-lunix.sh en el cliente en /etc/lunix/borg/borgcron-lunix.sh"
     echo "Agregar el script en crontab:"
     echo "0 0 * * * /etc/lunix/borg/borgcron-lunix.sh"
 
