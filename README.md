@@ -27,3 +27,4 @@ argumentos opcionales:
 ## PENDIENTES
 - Horarios para backups. Generados al azar?
 - Multiples configuraciones (1 local, 1 lunix, etc)
+- Habilitar prune ciertos días?

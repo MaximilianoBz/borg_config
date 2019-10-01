@@ -140,7 +140,8 @@ main() {
     echo "Modificar los directorios en la configuración de ser necesario"
     echo "Descargar borgcron-lunix.sh en el cliente en /etc/lunix/borg/borgcron-lunix.sh"
     echo "Agregar el script en crontab:"
-    echo "0 0 * * * /etc/lunix/borg/borgcron-lunix.sh"
+    echo "#Borg Backup - Empieza entre 23:30 y 03:30"
+    echo "30 23 * * * sleep $(( RANDOM \% 14400)); /etc/lunix/borg/borgcron-lunix.sh"
 
 }
 
