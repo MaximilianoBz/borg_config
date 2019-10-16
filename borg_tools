@@ -11,7 +11,7 @@
 # Dependencies:
 #  borgbackup (https://github.com/borgbackup/borg)
     
-VERSION="1.0"
+VERSION="1.1"
 DIR=/tmp/
 ERROR=0
 CONFIG="/etc/lunix/borg/borg.conf"
@@ -34,7 +34,11 @@ show_help() {
     echo "Se ejecuta en un cliente con un archivo de configuración presente"
     echo "o indicando el archivo de configuración de forma manual"
     echo ""
-    echo "${NORMAL}argumentos opcionales:"
+    echo "${NORMAL}operaciones:"
+    echo "  info ARCHIVE:      Sin argumento  muestra información sobre el repositorio total."
+    echo "                     Si se indica un archivo, muestra información sobre este"
+    echo "  list NUMBER:       Muestra una lista de los ultimos backups. Lista los ultimos 10 si no se indica un numero"
+    echo "argumentos opcionales:"
     echo "   -c | --config              Utiliza el archivo de configuración"
     echo "                              especificado en lugar del por defecto"
     echo "   -h | --help                Muestra este mensaje"
@@ -42,14 +46,18 @@ show_help() {
 }
 
 borg_info() {
+    echo "___________________________________________________"
     if [ -z $INFO_ARG ]; then
         $BORG_BIN info
     else
         $BORG_BIN info $BORG_REPO::$INFO_ARG
     fi
+    echo "___________________________________________________"
+    echo ""
 }
 
-borg_list() {
+borg_list_new() {
+    echo "___________________________________________________"
     if [ -z $LIST_ARG ]; then
         $BORG_BIN list --last 10
     else
@@ -59,9 +67,27 @@ borg_list() {
             echo "El argumento de ${BOLD}list ${NORMAL}debe ser un numero"
         fi
     fi
+    echo "___________________________________________________"
+    echo ""
+}
+
+borg_list_old() {
+    echo "___________________________________________________"
+    if [ -z $LIST_ARG ]; then
+        $BORG_BIN list --first 10
+    else
+        if [[ $LIST_ARG =~ $NUM_CHECK ]]; then
+            $BORG_BIN list --first $LIST_ARG
+        else 
+            echo "El argumento de ${BOLD}list ${NORMAL}debe ser un numero"
+        fi
+    fi
+    echo "___________________________________________________"
+    echo ""
 }
 
 borg_mount() {
+    echo "___________________________________________________"
     if [ -z "$MOUNT_ARG" ]; then
         MOUNT_ARG=$( $BORG_BIN list --last 1 --short )
         if [ ! -d "/tmp/$MOUNT_ARG" ]; then mkdir /tmp/$MOUNT_ARG; fi
@@ -79,6 +105,8 @@ borg_mount() {
             echo "Montaje realizado en $MOUNT_DEST"
         fi
     fi
+    echo "___________________________________________________"
+    echo ""
 }
 
 borg_umount() {
@@ -93,18 +121,20 @@ borg_umount() {
 borg_check() {
     if [ -z $CHECK_ARG ]; then
         $BORG_BIN check -p $BORG_REPO
+        exit ;;
     else
         $BORG_BIN check -p $BORG_REPO::$CHECK_ARG
+        exit ;;
     fi
 }
 
 show_menu() {
 while true; do
     echo "1) Información del repositorio"
-    echo "2) Listar los ultimos 10 backups"
-    echo "3) Extraer el contenido de un backup"
-    echo "4) Montar un backup"
-    echo "5) Desmontar un backup"
+    echo "2) Listar los 10 archivos mas recientes"
+    echo "3) Listar los 10 archivos mas antiguos"
+    echo "4) Montar un archivo"
+    echo "5) Desmontar un archivo"
     echo "6) Chequear el repositorio"
     echo "7) Salir"
     read -p "Opción (1-7): " OPT
@@ -112,7 +142,9 @@ while true; do
         1)
             borg_info ;;
         2)
-            borg_list ;;
+            borg_list_new ;;
+        3)
+            borg_list_old ;;
         4)
             read -p "Ingrese nombre del archivo o deje vacio para montar el ultimo:" MOUNT_ARG;
             read -p "Ingrese carpeta de destino:" MOUNT_DEST;
@@ -169,7 +201,15 @@ else
                 exit ;;
             list )
                 LIST_ARG=$2
-                borg_list
+                borg_list_new
+                exit ;;
+            list_new )
+                LIST_ARG=$2
+                borg_list_new
+                exit ;;
+            list_old )
+                LIST_ARG=$2
+                borg_list_old
                 exit ;;
             mount )
                 MOUNT_ARG=$2

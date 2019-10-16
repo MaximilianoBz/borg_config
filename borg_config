@@ -11,7 +11,7 @@
 # Dependencies:
 #  borgbackup (https://github.com/borgbackup/borg)
 
-VERSION="1.0.1"
+VERSION="1.0.3"
 DIR=/tmp/
 ERROR=0
 
@@ -101,8 +101,10 @@ main() {
     PUBKEY=$(cat $DIRCONFIG/.ssh/$CLIENT.pub)
 
     #Habilitar acceso al repositorio con la nueva llave
-    echo "#$CLIENT" >> /home/$BORGUSER/.ssh/authorized_keys
-    echo "command=\"borg serve --append-only --restrict-to-path $DIRREPO/\",no-pty,no-agent-forwarding,no-port-forwarding,no-X11-forwarding,no-user-rc $PUBKEY" >> /home/$BORGUSER/.ssh/authorized_keys
+    echo "#$CLIENT" >> /home/$BORGUSER/.ssh/authorized_keys_append_only
+    echo "command=\"borg serve --append-only --restrict-to-path $DIRREPO/\",no-pty,no-agent-forwarding,no-port-forwarding,no-X11-forwarding,no-user-rc $PUBKEY" >> /home/$BORGUSER/.ssh/authorized_keys_append_only
+    echo "#$CLIENT" >> /home/$BORGUSER/.ssh/authorized_keys_prune
+    echo "command=\"borg serve --restrict-to-path $DIRREPO/\",no-pty,no-agent-forwarding,no-port-forwarding,no-X11-forwarding,no-user-rc $PUBKEY" >> /home/$BORGUSER/.ssh/authorized_keys_prune
 
     #Generamos una passphrase random y la guardamos
     PASS=$(openssl rand -base64 24)
@@ -140,8 +142,8 @@ main() {
     echo "Modificar los directorios en la configuración de ser necesario"
     echo "Descargar borgcron-lunix.sh en el cliente en /etc/lunix/borg/borgcron-lunix.sh"
     echo "Agregar el script en crontab:"
-    echo "#Borg Backup - Empieza entre 23:30 y 03:30"
-    echo "30 23 * * * sleep $(( RANDOM \% 14400)); /etc/lunix/borg/borgcron-lunix.sh"
+    echo "#Borg Backup"
+    echo '30 23 * * * /etc/lunix/borg/borgcron-lunix.sh'
 
 }
 

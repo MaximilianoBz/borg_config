@@ -24,7 +24,10 @@ argumentos opcionales:
    -v | --version             Muestra la version del script
 ```
 
+## borg_tools
+Herramienta adicional para facilitar el uso de borg en el cliente. Ofrece varias operaciones mediante un menu o pasando variables
+
 ## PENDIENTES
-- Horarios para backups. Generados al azar?
 - Multiples configuraciones (1 local, 1 lunix, etc)
 - Habilitar prune ciertos días?
+- Checkeo de backups cada cierto tiempo? borg check y/o borg --dry-run extract 

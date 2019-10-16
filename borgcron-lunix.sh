@@ -269,6 +269,13 @@ trapterm() {
 trap 'trapterm INT' INT
 trap 'trapterm TERM' TERM
 
+#Agregamos una demora de hasta 4hs, para no realizar todos los backups en paralelo
+SLEEP_DELAY=$[( $RANDOM % $DELAY )]s
+
+info_log "El backup empezara luego de $SLEEP_DELAY segundos"
+
+sleep $SLEEP_DELAY
+
 # Agregamos bandera para zabbix
 echo "0" > /etc/lunix/borg_status
 
@@ -398,7 +405,7 @@ if [ -d "$LAST_BACKUP_DIR" ] && [ "$( dir_contains_files $LAST_BACKUP_DIR )" ]; 
 		relvtime=$(( $(date +%s) - time ))
 
 		if [ "$relvtime" -ge "$CRITICAL_TIME" ]; then
-            mail -s "Backup desactualizado en $( hostname --fqdn )" ingenieria@lunix.com.ar < echo "WARNING: The borg backup named \"$name\" is outdated. Last successful execution: $( date --date=@"$time" +'%A, %F %T' )"
+            echo "WARNING: The borg backup named \"$name\" is outdated. Last successful execution: $( date --date=@"$time" +'%A, %F %T' )" | mail -s "Backup desactualizado en $( hostname --fqdn )" ingenieria@lunix.com.ar
             error_log "WARNING: The borg backup named \"$name\" is outdated."
 			error_log "         Last successful execution: $( date --date=@"$time" +'%A, %F %T' )"
 		fi
