@@ -11,7 +11,7 @@
 # Dependencies:
 #  borgbackup (https://github.com/borgbackup/borg)
     
-VERSION="0.1"
+VERSION="0.2"
 DIR=/tmp/
 ERROR=0
 
@@ -194,13 +194,14 @@ main() {
 
 }
 
-#Seleccionamos configuracion
-select_conf
-#Cargamos variables
-main
-
 #Si no hay argumentos, mostrar menu
 if [ $# -eq 0 ]; then
+    #Seleccionamos configuracion
+    if [ -z $CONFIG ]; then
+        select_conf
+    fi
+    #Cargamos variables
+    main
     show_menu ;
     exit ;
 else
@@ -209,6 +210,7 @@ else
         case "$1" in
             -c | --config)
                 CONFIG=$2
+                main
                 shift ;;
             info )
                 INFO_ARG=$2
@@ -246,5 +248,12 @@ else
     done
 fi
 
+#Seleccionamos configuracion
+#if [ -z $CONFIG ]; then
+#    select_conf
+#fi
+#Cargamos variables
+#main
+
 #Mostar menu?
-show_menu
+#show_menu
