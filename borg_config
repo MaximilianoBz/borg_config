@@ -76,8 +76,8 @@ main() {
         echo "${RED}Ya existe el repositorio $DIRREPO";
         ERROR=1;
     fi
-    if [ ! -e $DIRCONFIG/borg_client.conf ]; then
-        echo "${RED}No existe la configuración base para cliente en $DIRCONFIG/borg_client.conf";
+    if [ ! -e $DIRCONFIG/borgcron.conf ]; then
+        echo "${RED}No existe la configuración base para cliente en $DIRCONFIG/borgcron.conf";
         ERROR=1;
     fi
 
@@ -119,7 +119,7 @@ main() {
     borg key export $DIRREPO $DIRCONFIG/$CLIENT.key
 
     #Generamos script basico para cliente
-    sed s/SRV_VAR/$SERVER/g $DIRCONFIG/borg_client.conf > $DIRCONFIG/$CLIENT.conf
+    sed s/SRV_VAR/$SERVER/g $DIRCONFIG/borgcron.conf > $DIRCONFIG/$CLIENT.conf
     sed -i s\#DIR_VAR\#$DIRREPO\#g $DIRCONFIG/$CLIENT.conf
     sed -i s\#PORT_VAR\#$PORT\#g $DIRCONFIG/$CLIENT.conf
     sed -i s\#PASS_VAR\#$PASS\#g $DIRCONFIG/$CLIENT.conf
@@ -140,10 +140,10 @@ main() {
     echo "${NORMAL} ${BOLD}"
     echo "Copiar la configuración $DIRCONFIG/$CLIENT.conf en el cliente como /etc/lunix/borg/borg.conf"
     echo "Modificar los directorios en la configuración de ser necesario"
-    echo "Descargar borgcron-lunix.sh en el cliente en /etc/lunix/borg/borgcron-lunix.sh"
+    echo "Descargar borgcron en el cliente en /etc/lunix/borg/borgcron"
     echo "Agregar el script en crontab:"
     echo "#Borg Backup"
-    echo '30 23 * * * /etc/lunix/borg/borgcron-lunix.sh'
+    echo '30 23 * * * /etc/lunix/borg/borgcron'
 
 }
 
