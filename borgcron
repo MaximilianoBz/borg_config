@@ -27,13 +27,7 @@ export BORG_REPO="ssh://$USER@$SERVER:$PORT$REPO"
 export BORG_PASSPHRASE="$REPO_PASS"
 ARCHIVE_NAME="{fqdn}-$BACKUP_NAME-{now:%Y-%m-%dT%H:%M}" # or %Y-%m-%d
 
-# The prefix makes sure only backups from this backup config are pruned. It is
-# recommend to leave it as it is. Otherwise comment it out to disable pruning
-# or – if you really want to remove the prefix – set it to an empty string.
-PRUNE_PREFIX="{fqdn}-$BACKUP_NAME-"
-
 # set placeholder/default value
-#PRUNE_PREFIX="null"
 exitcode=0
 exitcode_create=0
 
@@ -346,45 +340,6 @@ done
 # recovered through retrying, the last code is still 0
 track_exitcode $exitcode_create
 
-# The (optional) prefix makes sure only backups from this machine with this
-# backup-type are touched.
-# ($PRUNE_PARAMS intentionally not quoted)
-
-if [ "$PRUNE_PARAMS" ] && [ "$PRUNE_PREFIX" != "null" ] && [ "$exitcode" -lt 2 ]; then
-	info_log "Running prune for \"$BACKUP_NAME\"…"
-
-	# if RETRY_NUM_PRUNE is not set, fall back to RETRY_NUM
-	[ "$RETRY_NUM_PRUNE" = "" ] && RETRY_NUM_PRUNE=$RETRY_NUM
-
-	for i in $( seq "$(( RETRY_NUM_PRUNE+1 ))" ); do
-		backupIterationLockCheck "$i"
-
-		# add local lock
-		do_lock
-
-		# run prune
-		# shellcheck disable=SC2086
-		$BORG_BIN prune -v --stats --list --prefix "$PRUNE_PREFIX" $PRUNE_PARAMS 2>> $LOG_FILE
-
-		# check return code
-		exitcode_prune=$?
-
-		# remove local lock
-		rm_lock
-
-		# show output
-		evaluateExitCodes "$exitcode_prune" "prune"
-
-		# exit loop on non-critical errors (ignore 1 = warnings)
-		if [ $exitcode_prune -le 1 ]; then
-			# get out of loop
-			break;
-		fi
-	done
-
-	track_exitcode "$exitcode_prune"
-fi
-
 # log
 if [ "$exitcode" -ne 0 ]; then
 	error_log "Backup \"$BACKUP_NAME\" ended, but it seems something went wrong."
@@ -405,7 +360,7 @@ if [ -d "$LAST_BACKUP_DIR" ] && [ "$( dir_contains_files $LAST_BACKUP_DIR )" ]; 
 		relvtime=$(( $(date +%s) - time ))
 
 		if [ "$relvtime" -ge "$CRITICAL_TIME" ]; then
-            echo "WARNING: The borg backup named \"$name\" is outdated. Last successful execution: $( date --date=@"$time" +'%A, %F %T' )" | mail -s "Backup desactualizado en $( hostname --fqdn )" ingenieria@lunix.com.ar
+            echo "WARNING: The borg backup named \"$name\" is outdated. Last successful execution: $( date --date=@"$time" +'%A, %F %T' )" | mail -s "Backup desactualizado en $( hostname --fqdn )" $ALERT_EMAIL
             error_log "WARNING: The borg backup named \"$name\" is outdated."
 			error_log "         Last successful execution: $( date --date=@"$time" +'%A, %F %T' )"
 		fi

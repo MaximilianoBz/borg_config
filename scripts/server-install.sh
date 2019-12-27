@@ -9,11 +9,12 @@
 #Puerto SSH
 #PORT=22
 
-#Revisar si esta instalado curl y wget
+#Revisar si esta instalado curl o wget
 CURL=$(command -v curl)
 WGET=$(command -v wget)
 if [ ${#CURL} -eq 0 ] && [ ${#WGET} -eq 0 ]; then
     echo "Instalar curl antes de continuar";
+    echo "Como descargaste este script?";
     exit ;
 fi
 
@@ -45,5 +46,7 @@ chmod 600 -R /etc/lunix/borg
 #Agregar usuario y home de borg
 echo "Generando usuario y home para borg"
 useradd borg -s /bin/sh -m
-mkdir /home/borg/.ssh
+if [ ! -d /home/borg/.ssh ]; then mkdir /home/borg/.ssh; fi
 chown borg.borg -R /home/borg/.ssh
+echo "Instalacion finalizada"
+echo "Configurar las variables SERVER y PORT en /usr/local/sbin/borg_config"
