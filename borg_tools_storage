@@ -247,13 +247,3 @@ else
         shift
     done
 fi
-
-#Seleccionamos configuracion
-#if [ -z $CONFIG ]; then
-#    select_conf
-#fi
-#Cargamos variables
-#main
-
-#Mostar menu?
-#show_menu
