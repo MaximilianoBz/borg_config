@@ -39,12 +39,11 @@ if [ ! -d /u/borgbackup/ ]; then
     mkdir -p /u/borgbackup/;
 fi
 
-chown borg.borg -R /u/borgbackup/
-
 #Agregar usuario y home de borg
 echo "Generando usuario y home para borg"
 useradd borg -s /bin/sh -m
 if [ ! -d /home/borg/.ssh ]; then mkdir /home/borg/.ssh; fi
 chown borg.borg -R /home/borg/.ssh
+chown borg.borg -R /u/borgbackup/
 echo "Instalacion finalizada"
 echo "Configurar las variables SERVER y PORT en /usr/local/sbin/borg_config"
