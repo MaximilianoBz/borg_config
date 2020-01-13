@@ -36,8 +36,10 @@ chmod 600 -R /etc/lunix/borg
 
 #Generar carpeta para repositorio
 if [ ! -d /u/borgbackup/ ]; then
-    mkdir /u/borgbackup/;
+    mkdir -p /u/borgbackup/;
 fi
+
+chown borg.borg -R /u/borgbackup/
 
 #Agregar usuario y home de borg
 echo "Generando usuario y home para borg"
