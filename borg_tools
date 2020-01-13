@@ -14,7 +14,7 @@
 VERSION="1.1.3"
 DIR=/tmp/
 ERROR=0
-CONFIG="/etc/lunix/borg/borg.conf"
+CONFIG="/etc/lunix/borg/borgcron-local.conf"
 
 #Colores de texto
 BOLD=$(tput bold)
@@ -166,7 +166,7 @@ done
 
 main() {
 
-    #Leemos variables de borg.conf
+    #Leemos variables de borgcron-local.conf
     if [ -e $CONFIG ]; then
         source $CONFIG
     else

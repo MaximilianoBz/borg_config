@@ -10,7 +10,7 @@ setopt shwordsplit 2>/dev/null
 if [ ! -z "$1" ]; then
 	source $1
 else
-	source /etc/lunix/borg/borgcron.conf
+	source /etc/lunix/borg/borgcron-local.conf
 fi
 
 #Sobreescribimos configuración si se indica otro archivo
