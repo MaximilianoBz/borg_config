@@ -29,8 +29,8 @@ if  [ ! -z ${#CURL} ]; then
 else
     wget -q https://gitlab.lunix.com.ar/pramos/borg_config/raw/master/borgcron?inline=false -O /etc/lunix/borg/borgcron
 fi
-chmod +x /etc/lunix/borg/borgcron
 chmod 600 -R /etc/lunix/borg
+chmod +x /etc/lunix/borg/borgcron
 echo "Instalando script de Lunix: borgcron logrotate"
 if  [ ! -z ${#CURL} ]; then
     curl -sL https://gitlab.lunix.com.ar/pramos/borg_config/raw/master/borg_logrotate?inline=false -o /etc/logrotate.d/borg
@@ -44,4 +44,3 @@ useradd borg -s /bin/sh -m
 if [ ! -d /home/borg/.ssh ]; then mkdir /home/borg/.ssh; fi
 chown borg.borg -R /home/borg/.ssh
 echo "Instalacion finalizada"
-echo "Configurar las variables SERVER y PORT en /usr/local/sbin/borg_config"

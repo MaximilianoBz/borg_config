@@ -144,6 +144,7 @@ main() {
     echo "Agregar el script en crontab:"
     echo "#Borg Backup"
     echo '30 23 * * * /etc/lunix/borg/borgcron'
+    echo "${NORMAL}"
 
 }
 
