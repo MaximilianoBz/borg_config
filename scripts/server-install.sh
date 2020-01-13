@@ -3,7 +3,7 @@
 #Revisar si esta instalado curl o wget
 CURL=$(command -v curl)
 WGET=$(command -v wget)
-if [ ${#CURL} -eq 0 ] && [ ${#WGET} -eq 0 ]; then
+if [ -z ${#CURL} ] && [ -z ${#WGET} ]; then
     echo "Instalar curl antes de continuar";
     echo "Como descargaste este script?";
     exit ;
@@ -13,7 +13,7 @@ fi
 #Es necesario al menos la version 1.1 (aqui instalamos descargando el binario)
 #En buster se puede instalar por apt, en stretch activando stretch-backports
 echo "Instalando borgbackup"
-if  [ ! ${#CURL} -eq 0 ]; then
+if  [ ! -z ${#CURL} ]; then
     curl -sL https://github.com/borgbackup/borg/releases/download/1.1.10/borg-linux64 -o /usr/local/bin/borg
 else
     wget -q https://github.com/borgbackup/borg/releases/download/1.1.10/borg-linux64 -O /usr/local/bin/borg
@@ -24,7 +24,7 @@ chmod 755 /usr/local/bin/borg
 #Descargar borg_config
 echo "Instalando script de Lunix: borg_config"
 mkdir -p /etc/lunix/borg/.ssh
-if  [ ! ${#CURL} -eq 0 ]; then
+if  [ ! -z ${#CURL} ]; then
     curl -sL https://gitlab.lunix.com.ar/pramos/borg_config/raw/master/borg_config?inline=false -o /usr/local/sbin/borg_config
     curl -sL https://gitlab.lunix.com.ar/pramos/borg_config/raw/master/borgcron.conf?inline=false -o /etc/lunix/borg/borgcron.conf
 else

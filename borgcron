@@ -7,7 +7,11 @@
 setopt shwordsplit 2>/dev/null
 
 #Leemos variables de borg.conf
-source /etc/lunix/borg/borgcron.conf
+if [! -z "$1" ]; then
+	source $1
+else
+	source /etc/lunix/borg/borgcron.conf
+fi
 
 #Sobreescribimos configuración si se indica otro archivo
 while [[ "$1" ]]; do
