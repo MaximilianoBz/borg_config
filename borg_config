@@ -101,15 +101,13 @@ main() {
     PUBKEY=$(cat $DIRCONFIG/.ssh/$CLIENT.pub)
 
     #Habilitar acceso al repositorio con la nueva llave
-    echo "#$CLIENT" >> /home/$BORGUSER/.ssh/authorized_keys_append_only
-    echo "command=\"borg serve --append-only --restrict-to-path $DIRREPO/\",no-pty,no-agent-forwarding,no-port-forwarding,no-X11-forwarding,no-user-rc $PUBKEY" >> /home/$BORGUSER/.ssh/authorized_keys_append_only
-    echo "#$CLIENT" >> /home/$BORGUSER/.ssh/authorized_keys_prune
-    echo "command=\"borg serve --restrict-to-path $DIRREPO/\",no-pty,no-agent-forwarding,no-port-forwarding,no-X11-forwarding,no-user-rc $PUBKEY" >> /home/$BORGUSER/.ssh/authorized_keys_prune
+    echo "#$ CLIENT" >> /home/$BORGUSER/.ssh/authorized_keys
+    echo "command=\"borg serve --append-only --restrict-to-path $DIRREPO/\",no-pty,no-agent-forwarding,no-port-forwarding,no-X11-forwarding,no-user-rc $PUBKEY" >> /home/$BORGUSER/.ssh/authorized_keys
 
-    #Revisar si existe authorized_keys
-    if [ ! -f /home/$BORGUSER/.ssh/authorized_keys ]; then
-        ln -s /home/$BORGUSER/.ssh/authorized_keys_append_only /home/$BORGUSER/.ssh/authorized_keys;
-    fi
+    #Copia de authorized_keys
+    echo "#$ CLIENT" >> $DIRCONFIG/.ssh/authorized_keys
+    echo "command=\"borg serve --append-only --restrict-to-path $DIRREPO/\",no-pty,no-agent-forwarding,no-port-forwarding,no-X11-forwarding,no-user-rc $PUBKEY" >> $DIRCONFIG/.ssh/authorized_keys
+
 
     #Generamos una passphrase random y la guardamos
     PASS=$(openssl rand -base64 24)

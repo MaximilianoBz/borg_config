@@ -169,7 +169,7 @@ done
 select_conf() {
     DIR_ORIGINAL=$(pwd)
     echo "Configuraciones disponibles:"
-    cd $CONF_FOLDER && ls -1 *.conf |grep -v borg_client ;
+    cd $CONF_FOLDER && ls -1 *.conf |grep -v borgcron.conf ;
     cd $DIR_ORIGINAL
     echo ""
     read -p "Seleccione archivo de configuracion: " CLIENT;
