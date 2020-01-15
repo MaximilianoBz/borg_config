@@ -101,11 +101,11 @@ main() {
     PUBKEY=$(cat $DIRCONFIG/.ssh/$CLIENT.pub)
 
     #Habilitar acceso al repositorio con la nueva llave
-    echo "#$ CLIENT" >> /home/$BORGUSER/.ssh/authorized_keys
+    echo "#$CLIENT" >> /home/$BORGUSER/.ssh/authorized_keys
     echo "command=\"borg serve --append-only --restrict-to-path $DIRREPO/\",no-pty,no-agent-forwarding,no-port-forwarding,no-X11-forwarding,no-user-rc $PUBKEY" >> /home/$BORGUSER/.ssh/authorized_keys
 
     #Copia de authorized_keys
-    echo "#$ CLIENT" >> $DIRCONFIG/.ssh/authorized_keys
+    echo "#$CLIENT" >> $DIRCONFIG/.ssh/authorized_keys
     echo "command=\"borg serve --append-only --restrict-to-path $DIRREPO/\",no-pty,no-agent-forwarding,no-port-forwarding,no-X11-forwarding,no-user-rc $PUBKEY" >> $DIRCONFIG/.ssh/authorized_keys
 
 
