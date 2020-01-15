@@ -38,6 +38,14 @@ else
     wget -q https://gitlab.lunix.com.ar/pramos/borg_config/raw/master/borg_logrotate?inline=false -O /etc/logrotate.d/borg
 fi
 
+#Descargar borg_tools
+if  [ ! -z ${#CURL} ]; then
+    curl -sL https://gitlab.lunix.com.ar/pramos/borg_config/raw/master/borg_tools?inline=false -o /usr/local/sbin/borg_tools
+else
+    wget -q https://gitlab.lunix.com.ar/pramos/borg_config/raw/master/borg_tools?inline=false -O /usr/local/sbin/borg_tools
+fi
+chmod +x /usr/local/sbin/borg_tools
+
 #Agregar usuario y home de borg
 echo "Generando usuario y home para borg"
 useradd borg -s /bin/sh -m
