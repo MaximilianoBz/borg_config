@@ -51,4 +51,11 @@ echo "Generando usuario y home para borg"
 useradd borg -s /bin/sh -m
 if [ ! -d /home/borg/.ssh ]; then mkdir /home/borg/.ssh; fi
 chown borg.borg -R /home/borg/.ssh
+
+#Agregamos cron
+echo "Agregando cron"
+touch /var/spool/cron/crontabs/root
+echo "" >> /var/spool/cron/crontabs/root
+echo "#Borg Backup" >> /var/spool/cron/crontabs/root
+echo "30 23 * * * /etc/lunix/borg/borgcron" >> /var/spool/cron/crontabs/root
 echo "Instalacion finalizada"
