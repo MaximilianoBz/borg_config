@@ -6,24 +6,6 @@
 # but we need it
 setopt shwordsplit 2>/dev/null
 
-#Leemos variables de borg.conf
-if [ ! -z "$1" ]; then
-	source $1
-else
-	source /etc/lunix/borg/borgcron-local.conf
-fi
-
-#Sobreescribimos configuración si se indica otro archivo
-while [[ "$1" ]]; do
-    case "$1" in
-         -c | --config)
-            CONFIG=$2
-			source $CONFIG
-            shift ;;
-    esac
-    shift
-done
-
 #Variables
 # basic, required information
 export BORG_RSH='ssh -oBatchMode=yes -oStrictHostKeyChecking=no'
@@ -54,7 +36,7 @@ evaluateExitCodes() {
 	case $1 in
 		2 )
 			error_log "Borg exited with fatal error." #(2)
-			echo "0" > /etc/lunix/borg_status
+			echo "0" > /etc/lunix/borg_prune_status
 
 			# ignore last try
 			if [ "$i" -lt "$RETRY_NUM" ]; then
@@ -76,22 +58,22 @@ evaluateExitCodes() {
 			;;
 		1 )
 			error_log "Borg had some WARNINGS, but everything else was okay."
-			echo "1" > /etc/lunix/borg_status
+			echo "1" > /etc/lunix/borg_prune_status
 			;;
 		0 )
 			info_log "Borg has been successful."
-			echo "1" > /etc/lunix/borg_status
+			echo "1" > /etc/lunix/borg_prune_status
 			;;
 		* )
 			error_log "Unknown error with code $1 happened."
-			echo "0" > /etc/lunix/borg_status
+			echo "0" > /etc/lunix/borg_prune_status
 			;;
 	esac
 }
 
 # log system
 log_line() {
-	echo "[$( date +'%F %T' )]"
+	echo "[$( date +'%F %T' )] $archivo"
 }
 info_log() {
 	echo "$( log_line ): $*" >> $LOG_FILE
@@ -260,7 +242,7 @@ getInfoAboutLastBackup() {
 # add trap to catch backup interruptions
 trapterm() {
 	rm_lock 2> /dev/null
-	echo "0" > /etc/lunix/borg_status
+	echo "0" > /etc/lunix/borg_prune_status
 	error_log "Backup $BACKUP_NAME (PID: $$) interrupted by $1."
 	exit 2
 }
@@ -275,7 +257,7 @@ info_log "El backup empezara luego de $SLEEP_DELAY segundos"
 sleep $SLEEP_DELAY
 
 # Agregamos bandera para zabbix
-echo "0" > /etc/lunix/borg_status
+echo "0" > /etc/lunix/borg_prune_status
 
 # Crear directorio si no existe
 if [ ! -d $LAST_BACKUP_DIR ]; then
@@ -371,7 +353,14 @@ if [ -d "$LAST_BACKUP_DIR" ] && [ "$( dir_contains_files $LAST_BACKUP_DIR )" ]; 
 	done
 else
 	error_log "ERROR: No borg backup 'last' dir…"
-	echo "0" > /etc/lunix/borg_status
+	echo "0" > /etc/lunix/borg_prune_status
 fi
 
-exit "$exitcode"
+#Leemos variables de borg.conf
+for todos los archivos de configu
+	source archivo
+    LOG_FILE="/var/log/borg/borg-prune.log"
+    borg prune
+
+    exit "$exitcode"
+fi
