@@ -24,6 +24,7 @@ chmod 755 /usr/local/bin/borg
 #Descargar borg_config
 echo "Instalando script de Lunix: borg_config"
 mkdir -p /etc/lunix/borg/.ssh
+mkdir -p /etc/lunix/borg/client
 if  [ ! -z ${#CURL} ]; then
     curl -sL https://gitlab.lunix.com.ar/pramos/borg_config/raw/master/borg_config?inline=false -o /usr/local/sbin/borg_config
     curl -sL https://gitlab.lunix.com.ar/pramos/borg_config/raw/master/borgcron.conf.template?inline=false -o /etc/lunix/borg/client/borgcron.conf.template
