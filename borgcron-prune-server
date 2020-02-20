@@ -261,6 +261,12 @@ trap 'trapterm TERM' TERM
 #Limpiamos estado del ultimo prune 
  > /etc/lunix/borg_prune_status
 
+#Empezamos log
+empty_line_log;
+info_log "------------------------------------";
+info_log "Comenzando proceso de prune"
+info_log "------------------------------------";
+
 #Entramos a carpeta de configuraciones
 cd $CLIENTS;
 
