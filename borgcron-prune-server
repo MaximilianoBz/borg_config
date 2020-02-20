@@ -17,6 +17,11 @@ ARCHIVE_NAME="{fqdn}-$BACKUP_NAME-{now:%Y-%m-%dT%H:%M}" # or %Y-%m-%d
 exitcode=0
 exitcode_create=0
 
+# Overwrite config variables
+# to include client name
+overwrite_vars() {
+    LOG_FILE="/var/log/borg/borg-prune.log"
+}
 # Keep track oh highest exit code.
 #
 # args:
@@ -99,11 +104,11 @@ is_lock() {
 	fi
 
 	# when file is not present -> unlocked
-	if [ ! -f "$RUN_PID_DIR/BORG_$BACKUP_NAME.pid" ]; then
+	if [ ! -f "$RUN_PID_DIR/PRUNE_$BACKUP_NAME.pid" ]; then
 		return 1 # false
 	fi
 	# when PID listed in file is not running -> unlocked
-	if ! pgrep -F "$RUN_PID_DIR/BORG_$BACKUP_NAME.pid" > /dev/null; then
+	if ! pgrep -F "$RUN_PID_DIR/PRUNE_$BACKUP_NAME.pid" > /dev/null; then
 		return 1 # false
 	fi
 
@@ -124,7 +129,7 @@ do_lock() {
 	fi
 
 	# write PID into file
-	echo $$ > "$RUN_PID_DIR/BORG_$BACKUP_NAME.pid" || exit 2
+	echo $$ > "$RUN_PID_DIR/PRUNE_$BACKUP_NAME.pid" || exit 2
 
 	if ! is_lock; then
 		error_log "Locking was not successful. Cancel."
@@ -141,7 +146,7 @@ rm_lock() {
 		return
 	fi
 
-	rm "$RUN_PID_DIR/BORG_$BACKUP_NAME.pid"
+	rm "$RUN_PID_DIR/PRUNE_$BACKUP_NAME.pid"
 }
 
 # Checks in a loop whether we need to stop the loop or not and log messages.
@@ -359,7 +364,6 @@ fi
 #Leemos variables de borg.conf
 for todos los archivos de configu
 	source archivo
-    LOG_FILE="/var/log/borg/borg-prune.log"
     borg prune
 
     exit "$exitcode"

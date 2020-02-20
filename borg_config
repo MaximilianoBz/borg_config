@@ -25,7 +25,7 @@ YELLOW=$(tput setaf 3)
 #Variables de borg
 ENCRYPTION="repokey-blake2"
 DIRBASE="/u/borgbackup/"
-DIRCONFIG="/etc/lunix/borg"
+DIRCONFIG="/etc/lunix/borg/client"
 BORGUSER="borg"
 
 #Preferentemente configurar la variable SERVER con una IP fija.
@@ -76,8 +76,8 @@ main() {
         echo "${RED}Ya existe el repositorio $DIRREPO";
         ERROR=1;
     fi
-    if [ ! -e $DIRCONFIG/borgcron.conf ]; then
-        echo "${RED}No existe la configuración base para cliente en $DIRCONFIG/borgcron.conf";
+    if [ ! -e $DIRCONFIG/borgcron.conf.template ]; then
+        echo "${RED}No existe la configuración base para cliente en $DIRCONFIG/borgcron.conf.template";
         ERROR=1;
     fi
 
@@ -122,7 +122,7 @@ main() {
     borg key export $DIRREPO $DIRCONFIG/$CLIENT.key
 
     #Generamos script basico para cliente
-    sed s/SRV_VAR/$SERVER/g $DIRCONFIG/borgcron.conf > $DIRCONFIG/$CLIENT.conf
+    sed s/SRV_VAR/$SERVER/g $DIRCONFIG/borgcron.conf.template > $DIRCONFIG/$CLIENT.conf
     sed -i s\#DIR_VAR\#$DIRREPO\#g $DIRCONFIG/$CLIENT.conf
     sed -i s\#PORT_VAR\#$PORT\#g $DIRCONFIG/$CLIENT.conf
     sed -i s\#PASS_VAR\#$PASS\#g $DIRCONFIG/$CLIENT.conf

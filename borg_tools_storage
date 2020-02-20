@@ -25,7 +25,7 @@ YELLOW=$(tput setaf 3)
 NUM_CHECK='^[0-9]+$'
 
 #Carpeta con archivos de configuracion
-CONF_FOLDER='/etc/lunix/borg'
+CONF_FOLDER='/etc/lunix/borg/client'
 
 
 show_help() {

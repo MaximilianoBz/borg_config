@@ -1,5 +1,5 @@
 # Declaración de variables para scripts de borg
-# Colocar dentro de /etc/lunix/borg/borg.conf
+# Mover a /etc/lunix/borg/borgcron-local.conf
 
 #BORG_BIN: Full path de ejecutable de borg
 BORG_BIN="/usr/local/bin/borg"
