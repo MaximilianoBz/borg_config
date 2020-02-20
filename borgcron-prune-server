@@ -273,7 +273,6 @@ do
 	# check that variables are set
 	if [ "$BACKUP_NAME" = "" ] ||
 	[ "$BORG_REPO" = "" ] ||
-	[ "$ARCHIVE_NAME" = "" ] ||
 	[ "$BACKUP_DIRS" = "" ]; then
 		error_log 'Some required variables may not be set in the config file. Cancel backup.'
 		exit 2
