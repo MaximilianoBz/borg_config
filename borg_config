@@ -147,10 +147,6 @@ main() {
     echo "4) Copiar la configuración $DIRCONFIG/$CLIENT.conf en el cliente como /etc/lunix/borg/borgcron-local.conf"
     echo ""
     echo "5) Modificar los directorios en la configuración de ser necesario"
-    echo ""
-    echo "6) Agregar el script en crontab:"
-    echo "#Borg Backup"
-    echo '30 23 * * * /etc/lunix/borg/borgcron'
     echo "${NORMAL}"
 
 }

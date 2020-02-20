@@ -5,6 +5,15 @@ Se debe correr desde el servidor.
 ## Dependencies
 - ```borgbackup```
 
+## Instalacion con scripts
+La manera más simple de instalarlo, ejecutar los scripts de instalación en el servidor y cliente
+
+- SERVIDOR
+'''wget -O - https://gitlab.lunix.com.ar/pramos/borg_config/raw/master/scripts/server-install.sh?inline=false | sh'''
+
+- CLIENTE
+'''wget -O - https://gitlab.lunix.com.ar/pramos/borg_config/raw/master/scripts/client-install.sh?inline=false | sh'''
+
 ## Instalacion
 - Configurar en el script borg_config la variable SERVER con la IP o FQDN del servidor, la variable PORT con el puerto de conexiones SSH externas y la variable DIRBASE con el directorio donde se generaran los repositorios
 - Copiar borg_config en /usr/local/sbin/ y hacer ejecutable
