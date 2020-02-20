@@ -7,3 +7,13 @@
     notifempty
     create 0640 root root
 }
+
+/var/log/borg/borg-prune.log {
+    monthly
+    rotate 5
+    compress
+    delaycompress
+    missingok
+    notifempty
+    create 0640 root root
+}

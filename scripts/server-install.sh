@@ -44,6 +44,12 @@ else
 fi
 chmod +x /usr/local/sbin/borg_tools_storage
 chmod +x /etc/lunix/borg/borgcron-prune
+echo "Instalando script de Lunix: borgcron logrotate"
+if  [ ! -z ${#CURL} ]; then
+    curl -sL https://gitlab.lunix.com.ar/pramos/borg_config/raw/master/borg_logrotate?inline=false -o /etc/logrotate.d/borg
+else
+    wget -q https://gitlab.lunix.com.ar/pramos/borg_config/raw/master/borg_logrotate?inline=false -O /etc/logrotate.d/borg
+fi
 
 #Generar carpeta para repositorio
 if [ ! -d /u/borgbackup/ ]; then
