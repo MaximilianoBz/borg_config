@@ -188,8 +188,7 @@ backupIterationLockCheck() {
 # args:
 # $1 – Time in seconds.
 # returns: string
-prettifyTimeDisplay()
-{
+prettifyTimeDisplay() {
     t=$1
 
     d=$((t/60/60/24))
@@ -273,9 +272,6 @@ SLEEP_DELAY=$[( $RANDOM % $DELAY )]s
 info_log "El backup empezara luego de $SLEEP_DELAY segundos"
 
 sleep $SLEEP_DELAY
-
-# Agregamos bandera para zabbix
-echo "0" > /etc/lunix/borg_status
 
 # Crear directorio si no existe
 if [ ! -d $LAST_BACKUP_DIR ]; then

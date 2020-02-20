@@ -11,9 +11,11 @@ setopt shwordsplit 2>/dev/null
 export BORG_RSH='ssh -oBatchMode=yes -oStrictHostKeyChecking=no'
 export BORG_REPO="ssh://$USER@$SERVER:$PORT$REPO"
 export BORG_PASSPHRASE="$REPO_PASS"
-ARCHIVE_NAME="{fqdn}-$BACKUP_NAME-{now:%Y-%m-%dT%H:%M}" # or %Y-%m-%d
+
+CLIENTS="/etc/lunix/borg/client/*.conf"
 
 # set placeholder/default value
+PRUNE_PREFIX="null"
 exitcode=0
 exitcode_create=0
 
@@ -41,7 +43,7 @@ evaluateExitCodes() {
 	case $1 in
 		2 )
 			error_log "Borg exited with fatal error." #(2)
-			echo "0" > /etc/lunix/borg_prune_status
+			echo "$CONFIG: 0" > /etc/lunix/borg_prune_status
 
 			# ignore last try
 			if [ "$i" -lt "$RETRY_NUM" ]; then
@@ -254,117 +256,76 @@ trapterm() {
 trap 'trapterm INT' INT
 trap 'trapterm TERM' TERM
 
-#Agregamos una demora de hasta 4hs, para no realizar todos los backups en paralelo
-SLEEP_DELAY=$[( $RANDOM % $DELAY )]s
-
-info_log "El backup empezara luego de $SLEEP_DELAY segundos"
-
-sleep $SLEEP_DELAY
-
-# Agregamos bandera para zabbix
-echo "0" > /etc/lunix/borg_prune_status
-
-# Crear directorio si no existe
-if [ ! -d $LAST_BACKUP_DIR ]; then
-	mkdir -p $LAST_BACKUP_DIR
-fi
-
-# check lock
-if is_lock; then
-	error_log "Backup $BACKUP_NAME is locked. Prevent start."
-	exit 1
-fi
-
-# check that variables are set
-if [ "$BACKUP_NAME" = "" ] ||
-   [ "$BORG_REPO" = "" ] ||
-   [ "$ARCHIVE_NAME" = "" ] ||
-   [ "$BACKUP_DIRS" = "" ]; then
-	error_log 'Some required variables may not be set in the config file. Cancel backup.'
-	exit 2
-fi
-if ! export|grep -q "BORG_REPO"; then
-	error_log 'The BORG_REPO variable is not exported in the config file. Cancel backup.'
-	exit 2
-fi
-
-
-# log
-empty_line_log
-info_log "Backup $BACKUP_NAME started with $( $BORG_BIN -V ), helper PID: $$."
-
-for i in $( seq "$(( RETRY_NUM+1 ))" ); do
-	backupIterationLockCheck "$i"
-
-	# add local lock
-	do_lock
-
-	# backup dir (some variables intentionally not quoted)
-	# shellcheck disable=SC2086
-	$BORG_BIN create -v --stats \
-		--compression "$COMPRESSION" \
-		$ADD_BACKUP_PARAMS \
-		"::$ARCHIVE_NAME" \
-		$BACKUP_DIRS 2>> $LOG_FILE
-
-	# check return code
-	exitcode_create=$?
-
-	# remove local lock
-	rm_lock
-
-	# show output
-	evaluateExitCodes "$exitcode_create" "create"
-
-	# exit loop on non-critical errors (ignore 1 = warnings)
-	if [ $exitcode_create -le 1 ]; then
-		# save/update last backup time
-		if [ -d $LAST_BACKUP_DIR ]; then
-			date +'%s' > "$LAST_BACKUP_DIR/$BACKUP_NAME.time"
-		fi
-		# get out of loop
-		break;
-	fi
-done
-
-# only track latest exit code of execution, i.e. when backups fail but can be
-# recovered through retrying, the last code is still 0
-track_exitcode $exitcode_create
-
-# log
-if [ "$exitcode" -ne 0 ]; then
-	error_log "Backup \"$BACKUP_NAME\" ended, but it seems something went wrong."
-else
-	info_log "Backup \"$BACKUP_NAME\" ended successfully."
-fi
-
-#Check last backup
-dir_contains_files() {
-	ls -A "$1"
-}
-
-# check for borg backup notes
-if [ -d "$LAST_BACKUP_DIR" ] && [ "$( dir_contains_files $LAST_BACKUP_DIR )" ]; then
-	for file in "$LAST_BACKUP_DIR"/*; do
-		name=$( basename "$file" .time )
-		time=$( cat "$file" )
-		relvtime=$(( $(date +%s) - time ))
-
-		if [ "$relvtime" -ge "$CRITICAL_TIME" ]; then
-            echo "WARNING: The borg backup named \"$name\" is outdated. Last successful execution: $( date --date=@"$time" +'%A, %F %T' )" | mail -s "Backup desactualizado en $( hostname --fqdn )" $ALERT_EMAIL
-            error_log "WARNING: The borg backup named \"$name\" is outdated."
-			error_log "         Last successful execution: $( date --date=@"$time" +'%A, %F %T' )"
-		fi
-	done
-else
-	error_log "ERROR: No borg backup 'last' dir…"
-	echo "0" > /etc/lunix/borg_prune_status
-fi
-
+#Limpiamos estado del ultimo prune 
+ > /etc/lunix/borg_prune_status
 #Leemos variables de borg.conf
-for todos los archivos de configu
-	source archivo
-    borg prune
+for CONFIG in $CLIENTS
+do
+	source $CONFIG
+	overwrite_vars;
 
-    exit "$exitcode"
+	# check lock
+	if is_lock; then
+		error_log "Backup $BACKUP_NAME is locked. Prevent start."
+		exit 1
+	fi
+
+	# check that variables are set
+	if [ "$BACKUP_NAME" = "" ] ||
+	[ "$BORG_REPO" = "" ] ||
+	[ "$ARCHIVE_NAME" = "" ] ||
+	[ "$BACKUP_DIRS" = "" ]; then
+		error_log 'Some required variables may not be set in the config file. Cancel backup.'
+		exit 2
+	fi
+	if ! export|grep -q "BORG_REPO"; then
+		error_log 'The BORG_REPO variable is not exported in the config file. Cancel backup.'
+		exit 2
+	fi
+
+	# The (optional) prefix makes sure only backups from this machine with this
+	# backup-type are touched.
+	# ($PRUNE_PARAMS intentionally not quoted)
+
+	if [ "$PRUNE_PARAMS" ] && [ "$exitcode" -lt 2 ]; then
+		info_log "Running prune for \"$BACKUP_NAME\"…"
+
+		# if RETRY_NUM_PRUNE is not set, fall back to RETRY_NUM
+		[ "$RETRY_NUM_PRUNE" = "" ] && RETRY_NUM_PRUNE=$RETRY_NUM
+
+		for i in $( seq "$(( RETRY_NUM_PRUNE+1 ))" ); do
+			backupIterationLockCheck "$i"
+
+			# add local lock
+			do_lock
+
+			# run prune
+			$BORG_BIN prune -v --list $PRUNE_PARAMS
+
+			# check return code
+			exitcode_prune=$?
+
+			# remove local lock
+			rm_lock
+
+			# show output
+			evaluateExitCodes "$exitcode_prune" "prune"
+
+			# exit loop on non-critical errors (ignore 1 = warnings)
+			if [ $exitcode_prune -le 1 ]; then
+				# get out of loop
+				break;
+			fi
+		done
+
+		track_exitcode "$exitcode_prune"
+	fi
+
+	# log
+	if [ "$exitcode" -ne 0 ]; then
+		error_log "Prune \"$CONFIG\" ended, but it seems something went wrong."
+	else
+		info_log "Prune \"$CONFIG\" ended successfully."
+	fi
+	
 fi
