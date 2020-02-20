@@ -21,7 +21,7 @@ exitcode_create=0
 # to include client name
 overwrite_vars() {
     LOG_FILE="/var/log/borg/borg-prune.log"
-	export BORG_REPO="ssh://$USER@$SERVER:$PORT$REPO"
+	export BORG_REPO="$REPO"
 	export BORG_PASSPHRASE="$REPO_PASS"
 }
 # Keep track oh highest exit code.
