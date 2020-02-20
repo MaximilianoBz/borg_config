@@ -34,11 +34,13 @@ fi
 chmod +x /usr/local/sbin/borg_config
 chmod 600 -R /etc/lunix/borg
 
-#Descargar borg_tools
+#Descargar borg_tools y borgcron-prune
 if  [ ! -z ${#CURL} ]; then
     curl -sL https://gitlab.lunix.com.ar/pramos/borg_config/raw/master/borg_tools_storage?inline=false -o /usr/local/sbin/borg_tools_storage
+    curl -sL https://gitlab.lunix.com.ar/pramos/borg_config/raw/master/borgcron-prune-server?inline=false -o /etc/lunix/borg/borgcron-prune
 else
     wget -q https://gitlab.lunix.com.ar/pramos/borg_config/raw/master/borg_tools_storage?inline=false -O /usr/local/sbin/borg_tools_storage
+    wget -q https://gitlab.lunix.com.ar/pramos/borg_config/raw/master/borgcron-prune-server?inline=false -O /etc/lunix/borg/borgcron-prune
 fi
 chmod +x /usr/local/sbin/borg_tools_storage
 
