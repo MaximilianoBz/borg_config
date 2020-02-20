@@ -9,8 +9,6 @@ setopt shwordsplit 2>/dev/null
 #Variables
 # basic, required information
 export BORG_RSH='ssh -oBatchMode=yes -oStrictHostKeyChecking=no'
-export BORG_REPO="ssh://$USER@$SERVER:$PORT$REPO"
-export BORG_PASSPHRASE="$REPO_PASS"
 
 CLIENTS="/etc/lunix/borg/client/*.conf"
 
@@ -23,6 +21,8 @@ exitcode_create=0
 # to include client name
 overwrite_vars() {
     LOG_FILE="/var/log/borg/borg-prune.log"
+	export BORG_REPO="ssh://$USER@$SERVER:$PORT$REPO"
+	export BORG_PASSPHRASE="$REPO_PASS"
 }
 # Keep track oh highest exit code.
 #
@@ -328,4 +328,4 @@ do
 		info_log "Prune \"$CONFIG\" ended successfully."
 	fi
 	
-fi
+done
