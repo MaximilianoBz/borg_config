@@ -64,5 +64,13 @@ useradd borg -s /bin/sh -m
 if [ ! -d /home/borg/.ssh ]; then mkdir /home/borg/.ssh; fi
 chown borg.borg -R /home/borg/.ssh
 chown borg.borg -R /u/borgbackup/
+
+#Cron
+echo "Agregando cron"
+touch /var/spool/cron/crontabs/root
+echo "" >> /var/spool/cron/crontabs/root
+echo "#Borg Prune dos veces al mes" >> /var/spool/cron/crontabs/root
+echo "00 18 1,16 * * /etc/lunix/borg/borgcron-prune" >> /var/spool/cron/crontabs/root
+
 echo "Instalacion finalizada"
 echo "Configurar las variables SERVER y PORT en /usr/local/sbin/borg_config"

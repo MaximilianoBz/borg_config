@@ -48,10 +48,11 @@ chmod +x /usr/local/sbin/borg_tools
 
 #Carpeta para logs
 mkdir /var/log/borg
-#Agregamos cron
+#Cron
 echo "Agregando cron"
 touch /var/spool/cron/crontabs/root
 echo "" >> /var/spool/cron/crontabs/root
 echo "#Borg Backup" >> /var/spool/cron/crontabs/root
 echo "30 23 * * * /etc/lunix/borg/borgcron" >> /var/spool/cron/crontabs/root
+
 echo "Instalacion finalizada"
