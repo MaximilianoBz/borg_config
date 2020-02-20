@@ -50,6 +50,8 @@ if [ ! -d /u/borgbackup/ ]; then
     mkdir -p /u/borgbackup/;
 fi
 
+#Carpeta para logs
+mkdir /var/log/borg
 #Agregar usuario y home de borg
 echo "Generando usuario y home para borg"
 useradd borg -s /bin/sh -m

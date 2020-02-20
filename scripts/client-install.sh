@@ -52,6 +52,8 @@ useradd borg -s /bin/sh -m
 if [ ! -d /home/borg/.ssh ]; then mkdir /home/borg/.ssh; fi
 chown borg.borg -R /home/borg/.ssh
 
+#Carpeta para logs
+mkdir /var/log/borg
 #Agregamos cron
 echo "Agregando cron"
 touch /var/spool/cron/crontabs/root

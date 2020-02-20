@@ -10,7 +10,7 @@ setopt shwordsplit 2>/dev/null
 # basic, required information
 export BORG_RSH='ssh -oBatchMode=yes -oStrictHostKeyChecking=no'
 
-CLIENTS="/etc/lunix/borg/client/*.conf"
+CLIENTS="/etc/lunix/borg/client"
 
 # set placeholder/default value
 PRUNE_PREFIX="null"
