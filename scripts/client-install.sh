@@ -46,12 +46,6 @@ else
 fi
 chmod +x /usr/local/sbin/borg_tools
 
-#Agregar usuario y home de borg
-echo "Generando usuario y home para borg"
-useradd borg -s /bin/sh -m
-if [ ! -d /home/borg/.ssh ]; then mkdir /home/borg/.ssh; fi
-chown borg.borg -R /home/borg/.ssh
-
 #Carpeta para logs
 mkdir /var/log/borg
 #Agregamos cron

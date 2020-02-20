@@ -23,6 +23,8 @@ overwrite_vars() {
     LOG_FILE="/var/log/borg/borg-prune.log"
 	export BORG_REPO="$REPO"
 	export BORG_PASSPHRASE="$REPO_PASS"
+	SLEEP_TIME="3m"
+	RETRY_NUM="3"
 }
 # Keep track oh highest exit code.
 #

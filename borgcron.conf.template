@@ -50,7 +50,7 @@ ADD_BACKUP_PARAMS="--exclude-caches --exclude '/home/*/.cache/*' --exclude '/var
 # deben borrar los archivos viejos de forma manual
 BACKUP_NAME='FULL-LOCAL'
 #PRUNE_PARAMS: Periodo de retención de los backups
-PRUNE_PARAMS="--keep-daily=92 --keep-weekly=12 --keep-monthly=6 --keep-yearly=1"
+PRUNE_PARAMS="--keep-daily=61 --keep-weekly=8 --keep-monthly=2 --keep-yearly=0"
 #CRITICAL_TIME: Tiempo maximo entre backups antes que envie alerta
 CRITICAL_TIME="172800" # 48hs (48*60*60)
 #ALERT_EMAIL: Dirección de email a la que enviar alertas
