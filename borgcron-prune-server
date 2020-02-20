@@ -80,7 +80,7 @@ evaluateExitCodes() {
 
 # log system
 log_line() {
-	echo "[$( date +'%F %T' )] $archivo"
+	echo "[$( date +'%F %T' )] $CONFIG"
 }
 info_log() {
 	echo "$( log_line ): $*" >> $LOG_FILE
@@ -299,7 +299,7 @@ do
 			do_lock
 
 			# run prune
-			$BORG_BIN prune -v --list $PRUNE_PARAMS
+			$BORG_BIN prune -v --stats --list $PRUNE_PARAMS 2>> $LOG_FILE
 
 			# check return code
 			exitcode_prune=$?
