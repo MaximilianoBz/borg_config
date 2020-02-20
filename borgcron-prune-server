@@ -258,8 +258,12 @@ trap 'trapterm TERM' TERM
 
 #Limpiamos estado del ultimo prune 
  > /etc/lunix/borg_prune_status
-#Leemos variables de borg.conf
-for CONFIG in $CLIENTS
+
+#Entramos a carpeta de configuraciones
+cd $CLIENTS;
+
+#Ejecutamos prune para cada archivo
+for CONFIG in *.conf
 do
 	source $CONFIG
 	overwrite_vars;
