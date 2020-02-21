@@ -11,7 +11,7 @@
 # Dependencies:
 #  borgbackup (https://github.com/borgbackup/borg)
 
-VERSION="1.0.3"
+VERSION="0.7"
 DIR=/tmp/
 ERROR=0
 
@@ -97,6 +97,7 @@ main() {
     fi
 
     #Generar nueva llave SSH para el cliente
+    echo "Generando llave ssh y configuracion de cliente..."
     ssh-keygen -t rsa -b 4096 -C "$CLIENT" -f $DIRCONFIG/.ssh/$CLIENT -q -N ""
     PUBKEY=$(cat $DIRCONFIG/.ssh/$CLIENT.pub)
 
