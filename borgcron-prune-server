@@ -338,5 +338,8 @@ do
 	else
 		info_log "Prune \"$CONFIG\" ended successfully."
 	fi
+
+	# Restauramos permisos para usuario borg
+	chown borg.borg -R $REPO
 	
 done
