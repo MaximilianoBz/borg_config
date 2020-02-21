@@ -11,7 +11,7 @@
 # Dependencies:
 #  borgbackup (https://github.com/borgbackup/borg)
     
-VERSION="0.2"
+VERSION="0.7"
 DIR=/tmp/
 ERROR=0
 
@@ -90,6 +90,7 @@ borg_list_old() {
 
 borg_mount() {
     echo "___________________________________________________"
+    echo "Montando recurso..."
     if [ -z "$MOUNT_ARG" ]; then
         MOUNT_ARG=$( $BORG_BIN list --last 1 --short )
         if [ ! -d "/tmp/$MOUNT_ARG" ]; then mkdir /tmp/$MOUNT_ARG; fi
@@ -151,7 +152,7 @@ while true; do
             borg_list_old ;;
         4)
             read -p "Ingrese nombre del archivo o deje vacio para montar el ultimo: " MOUNT_ARG;
-            read -p "Ingrese carpeta de destino: " MOUNT_DEST;
+            read -p "Ingrese carpeta de destino o deje vacio para montar en /tmp/: " MOUNT_DEST;
             borg_mount ;;
         5) 
             read -p "Ingrese carpeta a desmontar: " UMOUNT_DEST;
