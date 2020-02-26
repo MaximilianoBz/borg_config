@@ -53,6 +53,8 @@ echo "Agregando cron"
 touch /var/spool/cron/crontabs/root
 echo "" >> /var/spool/cron/crontabs/root
 echo "#Borg Backup" >> /var/spool/cron/crontabs/root
-echo "30 23 * * * /etc/lunix/borg/borgcron" >> /var/spool/cron/crontabs/root
+echo "0 0 * * * /etc/lunix/borg/borgcron" >> /var/spool/cron/crontabs/root
+echo "" >> /var/spool/cron/crontabs/root
+crontab /var/spool/cron/crontabs/root
 
 echo "Instalacion finalizada"

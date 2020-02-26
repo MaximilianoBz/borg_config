@@ -29,13 +29,13 @@ REPO_PASS="PASS_VAR"
 # Directorios
 ##############################################################
 #BACKUP_DIRS: Directorios incluidos en el backup
-#Por defecto un backup FULL
-BACKUP_DIRS="/etc /var/spool/cron /usr/local /var/www/ /u"
+#Por defecto un backup basico
+BACKUP_DIRS="/etc /var/spool/cron /usr/local"
 #Agregar con prefijo --exclude los subdirectorios que deben ignorarse
 ADD_BACKUP_PARAMS="--exclude-caches --exclude '/home/*/.cache/*' --exclude '/var/cache/*' --exclude '/var/tmp/*'"
 #Ejemplos para servidores
-#Basico:
-#BACKUP_DIRS="/etc /var/spool/cron /usr/local"
+#WEB:
+#BACKUP_DIRS="/etc /var/spool/cron /usr/local /var/www"
 #PROXMOX:
 #BACKUP_DIRS="/etc /etc/pve /var/lib/pve-cluster /root/.ssh /var/spool/cron /usr/local"
 #UNIFI:
