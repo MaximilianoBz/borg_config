@@ -36,6 +36,9 @@ argumentos opcionales:
    -v | --version             Muestra la version del script
 ```
 
+Ejecutar borg_config en el servidor para generar la configuración de clientes, y luego seguir las instrucciones para copiar la configuracion en el cliente.
+Asegurarse que los clientes lleguen al servidor en el puerto SSH
+
 ## borg_tools
 Herramienta adicional para facilitar el uso de borg en el cliente. Ofrece varias operaciones mediante un menu o pasando variables
 
