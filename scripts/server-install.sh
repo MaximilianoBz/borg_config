@@ -72,5 +72,11 @@ echo "" >> /var/spool/cron/crontabs/root
 echo "#Borg Prune dos veces al mes" >> /var/spool/cron/crontabs/root
 echo "00 18 1,16 * * /etc/lunix/borg/borgcron-prune" >> /var/spool/cron/crontabs/root
 
+#Parametro zabbix
+if [ -f "/etc/zabbix/zabbix_agentd.conf" ]; then
+    echo "UserParameter=borg_prune.status, cat /etc/lunix/borg_prune_status" >> /etc/zabbix/zabbix_agentd.conf
+    systemctl restart zabbix-agent.service
+fi
+
 echo "Instalacion finalizada"
 echo "Configurar las variables SERVER y PORT en /usr/local/sbin/borg_config"

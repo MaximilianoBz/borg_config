@@ -57,4 +57,10 @@ echo "0 0 * * * /etc/lunix/borg/borgcron" >> /var/spool/cron/crontabs/root
 echo "" >> /var/spool/cron/crontabs/root
 crontab /var/spool/cron/crontabs/root
 
+#Parametro zabbix
+if [ -f "/etc/zabbix/zabbix_agentd.conf" ]; then
+    echo "UserParameter=borg.status, cat /etc/lunix/borg_status" >> /etc/zabbix/zabbix_agentd.conf
+    systemctl restart zabbix-agent.service
+fi
+
 echo "Instalacion finalizada"
