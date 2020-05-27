@@ -42,9 +42,11 @@ Asegurarse que los clientes lleguen al servidor en el puerto SSH
 ## borg_tools
 Herramienta adicional para facilitar el uso de borg en el cliente. Ofrece varias operaciones mediante un menu o pasando variables
 
+## borg_tools_storage
+Similar a borg_tools, pero permite definir sobre que configuracion se quieren realizar las operaciones
+
 ## PENDIENTES
-- Multiples configuraciones (1 local, 1 lunix, etc)
-- Habilitar prune ciertos días?
+- Revisar que script de prune funcione en cron (funciona manualmente)
 - Checkeo de backups cada cierto tiempo? borg check y/o borg --dry-run extract 
 - Zabbix: Agregar alerta si archivo /etc/lunix/borg_status tiene más de dos días
 - Zabbix: Agregar alerta si /etc/lunix/borg_status tiene valor 0
