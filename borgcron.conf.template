@@ -59,7 +59,7 @@ ALERT_EMAIL="ingenieria@lunix.com.ar"
 ##############################################################
 # Variables por defecto para borgcron, no es necesario cambiar
 ##############################################################
-COMPRESSION="lz4"
+COMPRESSION="auto,zstd"
 SLEEP_TIME="20m"
 RETRY_NUM="5"
 DELAY="14400" #4 Horas
