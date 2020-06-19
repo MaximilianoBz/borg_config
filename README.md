@@ -47,6 +47,7 @@ Similar a borg_tools, pero permite definir sobre que configuracion se quieren re
 
 ## PENDIENTES
 - Revisar que script de prune funcione en cron (funciona manualmente)
+- Revisar que script de prune devuelve error si falla cualquier prune
 - Checkeo de backups cada cierto tiempo? borg check y/o borg --dry-run extract 
 - Zabbix: Agregar alerta si archivo /etc/lunix/borg_status tiene más de dos días
 - Zabbix: Agregar alerta si /etc/lunix/borg_status tiene valor 0
