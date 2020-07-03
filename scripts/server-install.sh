@@ -25,30 +25,30 @@ chmod 755 /usr/local/bin/borg
 echo "Instalando script de Lunix: borg_config"
 mkdir -p /etc/lunix/borg/client/.ssh
 if  [ $CURL ]; then
-    curl -sL https://gitlab.lunix.com.ar/pramos/borg_config/raw/master/borg_config?inline=false -o /usr/local/sbin/borg_config
-    curl -sL https://gitlab.lunix.com.ar/pramos/borg_config/raw/master/borgcron.conf.template?inline=false -o /etc/lunix/borg/client/borgcron.conf.template
+    curl -sL https://git.lunix.com.ar/pramos/borg_config/raw/master/borg_config?inline=false -o /usr/local/sbin/borg_config
+    curl -sL https://git.lunix.com.ar/pramos/borg_config/raw/master/borgcron.conf.template?inline=false -o /etc/lunix/borg/client/borgcron.conf.template
 else
-    wget -q https://gitlab.lunix.com.ar/pramos/borg_config/raw/master/borg_config?inline=false -O /usr/local/sbin/borg_config
-    wget -q https://gitlab.lunix.com.ar/pramos/borg_config/raw/master/borgcron.conf.template?inline=false -O /etc/lunix/borg/client/borgcron.conf.template
+    wget -q https://git.lunix.com.ar/pramos/borg_config/raw/master/borg_config?inline=false -O /usr/local/sbin/borg_config
+    wget -q https://git.lunix.com.ar/pramos/borg_config/raw/master/borgcron.conf.template?inline=false -O /etc/lunix/borg/client/borgcron.conf.template
 fi
 chmod +x /usr/local/sbin/borg_config
 chmod 600 -R /etc/lunix/borg
 
 #Descargar borg_tools y borgcron-prune
 if  [ $CURL ]; then
-    curl -sL https://gitlab.lunix.com.ar/pramos/borg_config/raw/master/borg_tools_storage?inline=false -o /usr/local/sbin/borg_tools_storage
-    curl -sL https://gitlab.lunix.com.ar/pramos/borg_config/raw/master/borgcron-prune-server?inline=false -o /etc/lunix/borg/borgcron-prune
+    curl -sL https://git.lunix.com.ar/pramos/borg_config/raw/master/borg_tools_storage?inline=false -o /usr/local/sbin/borg_tools_storage
+    curl -sL https://git.lunix.com.ar/pramos/borg_config/raw/master/borgcron-prune-server?inline=false -o /etc/lunix/borg/borgcron-prune
 else
-    wget -q https://gitlab.lunix.com.ar/pramos/borg_config/raw/master/borg_tools_storage?inline=false -O /usr/local/sbin/borg_tools_storage
-    wget -q https://gitlab.lunix.com.ar/pramos/borg_config/raw/master/borgcron-prune-server?inline=false -O /etc/lunix/borg/borgcron-prune
+    wget -q https://git.lunix.com.ar/pramos/borg_config/raw/master/borg_tools_storage?inline=false -O /usr/local/sbin/borg_tools_storage
+    wget -q https://git.lunix.com.ar/pramos/borg_config/raw/master/borgcron-prune-server?inline=false -O /etc/lunix/borg/borgcron-prune
 fi
 chmod +x /usr/local/sbin/borg_tools_storage
 chmod +x /etc/lunix/borg/borgcron-prune
 echo "Instalando script de Lunix: borgcron logrotate"
 if  [ $CURL ]; then
-    curl -sL https://gitlab.lunix.com.ar/pramos/borg_config/raw/master/borg_logrotate?inline=false -o /etc/logrotate.d/borg
+    curl -sL https://git.lunix.com.ar/pramos/borg_config/raw/master/borg_logrotate?inline=false -o /etc/logrotate.d/borg
 else
-    wget -q https://gitlab.lunix.com.ar/pramos/borg_config/raw/master/borg_logrotate?inline=false -O /etc/logrotate.d/borg
+    wget -q https://git.lunix.com.ar/pramos/borg_config/raw/master/borg_logrotate?inline=false -O /etc/logrotate.d/borg
 fi
 
 #Generar carpeta para repositorio

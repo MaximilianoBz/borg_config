@@ -25,24 +25,24 @@ chmod 755 /usr/local/bin/borg
 echo "Instalando script de Lunix: borgcron"
 mkdir -p /etc/lunix/borg/
 if  [ $CURL ]; then
-    curl -sL https://gitlab.lunix.com.ar/pramos/borg_config/raw/master/borgcron?inline=false -o /etc/lunix/borg/borgcron
+    curl -sL https://git.lunix.com.ar/pramos/borg_config/raw/master/borgcron?inline=false -o /etc/lunix/borg/borgcron
 else
-    wget -q https://gitlab.lunix.com.ar/pramos/borg_config/raw/master/borgcron?inline=false -O /etc/lunix/borg/borgcron
+    wget -q https://git.lunix.com.ar/pramos/borg_config/raw/master/borgcron?inline=false -O /etc/lunix/borg/borgcron
 fi
 chmod 600 -R /etc/lunix/borg
 chmod +x /etc/lunix/borg/borgcron
 echo "Instalando script de Lunix: borgcron logrotate"
 if  [ $CURL ]; then
-    curl -sL https://gitlab.lunix.com.ar/pramos/borg_config/raw/master/borg_logrotate?inline=false -o /etc/logrotate.d/borg
+    curl -sL https://git.lunix.com.ar/pramos/borg_config/raw/master/borg_logrotate?inline=false -o /etc/logrotate.d/borg
 else
-    wget -q https://gitlab.lunix.com.ar/pramos/borg_config/raw/master/borg_logrotate?inline=false -O /etc/logrotate.d/borg
+    wget -q https://git.lunix.com.ar/pramos/borg_config/raw/master/borg_logrotate?inline=false -O /etc/logrotate.d/borg
 fi
 
 #Descargar borg_tools
 if  [ $CURL ]; then
-    curl -sL https://gitlab.lunix.com.ar/pramos/borg_config/raw/master/borg_tools?inline=false -o /usr/local/sbin/borg_tools
+    curl -sL https://git.lunix.com.ar/pramos/borg_config/raw/master/borg_tools?inline=false -o /usr/local/sbin/borg_tools
 else
-    wget -q https://gitlab.lunix.com.ar/pramos/borg_config/raw/master/borg_tools?inline=false -O /usr/local/sbin/borg_tools
+    wget -q https://git.lunix.com.ar/pramos/borg_config/raw/master/borg_tools?inline=false -O /usr/local/sbin/borg_tools
 fi
 chmod +x /usr/local/sbin/borg_tools
 
