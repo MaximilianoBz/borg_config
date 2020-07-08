@@ -10,11 +10,11 @@ La manera más simple de instalarlo, ejecutar los scripts de instalación en el 
 
 - SERVIDOR
 
-```wget -O - https://git.lunix.com.ar/pramos/borg_config/raw/master/scripts/server-install.sh?inline=false | sh```
+```wget -O - https://git.lunix.com.ar/pramos/borg_config/raw/master/scripts/server-install.sh? | sh```
 
 - CLIENTE
 
-```wget -O - https://git.lunix.com.ar/pramos/borg_config/raw/master/scripts/client-install.sh?inline=false | sh```
+```wget -O - https://git.lunix.com.ar/pramos/borg_config/raw/master/scripts/client-install.sh? | sh```
 
 
 ## Instalacion manual
