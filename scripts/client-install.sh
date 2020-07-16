@@ -59,6 +59,7 @@ crontab /var/spool/cron/crontabs/root
 
 #Parametro zabbix
 if [ -f "/etc/zabbix/zabbix_agentd.conf" ]; then
+    echo "Configurando zabbix"
     echo "UserParameter=borg.status, cat /etc/lunix/borg_status" >> /etc/zabbix/zabbix_agentd.conf
     systemctl restart zabbix-agent.service
 fi

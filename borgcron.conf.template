@@ -29,10 +29,6 @@ REPO_PASS="PASS_VAR"
 # Directorios
 ##############################################################
 #BACKUP_DIRS: Directorios incluidos en el backup
-#Por defecto un backup basico
-BACKUP_DIRS="/etc /var/spool/cron /usr/local"
-#Agregar con prefijo --exclude los subdirectorios que deben ignorarse
-ADD_BACKUP_PARAMS="--exclude-caches --exclude '/home/*/.cache/*' --exclude '/var/cache/*' --exclude '/var/tmp/*'"
 #Ejemplos para servidores
 #WEB:
 #BACKUP_DIRS="/etc /var/spool/cron /usr/local /var/www"
@@ -40,7 +36,10 @@ ADD_BACKUP_PARAMS="--exclude-caches --exclude '/home/*/.cache/*' --exclude '/var
 #BACKUP_DIRS="/etc /etc/pve /var/lib/pve-cluster /root/.ssh /var/spool/cron /usr/local"
 #UNIFI:
 #BACKUP_DIRS="/etc /var/spool/cron /usr/local /var/lib/unifi/backup"
-
+#Por defecto un backup basico
+BACKUP_DIRS="/etc /var/spool/cron /usr/local"
+#Agregar con prefijo --exclude los subdirectorios que deben ignorarse
+ADD_BACKUP_PARAMS="--exclude-caches --exclude '/home/*/.cache/*' --exclude '/var/cache/*' --exclude '/var/tmp/*'"
 
 ##############################################################
 # Variables del backup
