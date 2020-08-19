@@ -18,7 +18,7 @@ La manera más simple de instalarlo, ejecutar los scripts de instalación en el 
 
 
 ## Instalacion manual
-- Configurar en el script borg_config la variable SERVER con la IP o FQDN del servidor, la variable PORT con el puerto de conexiones SSH externas y la variable DIRBASE con el directorio donde se generaran los repositorios
+- Configurar en el script /usr/local/sbin/borg_config la variable SERVER con la IP o FQDN del servidor, la variable PORT con el puerto de conexiones SSH externas y la variable DIRBASE con el directorio donde se generaran los repositorios
 - Copiar borg_config en /usr/local/sbin/ y hacer ejecutable
 - Generar el directorio /etc/lunix/borg/client y /etc/lunix/borg/client/.ssh con permisos 600 para root
 - Copiar borgcron.conf en /etc/lunix/borg/client/borgcron.conf.template
