@@ -16,6 +16,7 @@ La manera más simple de instalarlo, ejecutar los scripts de instalación en el 
 
 ```wget -O - https://git.lunix.com.ar/pramos/borg_config/raw/branch/master/scripts/client-install.sh | sh```
 
+> :warning: **Para Debian 6 y distros viejas**: Utilizar borg 1.1.10, el script utiliza versiones más nuevas. Asegurarse compatibilidad con el servidor
 
 ## Instalacion manual
 - Configurar en el script borg_config la variable SERVER con la IP o FQDN del servidor, la variable PORT con el puerto de conexiones SSH externas y la variable DIRBASE con el directorio donde se generaran los repositorios

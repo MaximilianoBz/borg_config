@@ -14,9 +14,9 @@ fi
 #En buster se puede instalar por apt, en stretch activando stretch-backports
 echo "Instalando borgbackup"
 if  [ $CURL ]; then
-    curl -sL https://github.com/borgbackup/borg/releases/download/1.1.10/borg-linux64 -o /usr/local/bin/borg
+    curl -sL https://github.com/borgbackup/borg/releases/download/1.1.13/borg-linux64 -o /usr/local/bin/borg
 else
-    wget -q https://github.com/borgbackup/borg/releases/download/1.1.10/borg-linux64 -O /usr/local/bin/borg
+    wget -q https://github.com/borgbackup/borg/releases/download/1.1.13/borg-linux64 -O /usr/local/bin/borg
 fi
 chown root:root /usr/local/bin/borg
 chmod 755 /usr/local/bin/borg
