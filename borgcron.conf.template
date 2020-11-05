@@ -39,7 +39,7 @@ REPO_PASS="PASS_VAR"
 #Por defecto un backup basico
 BACKUP_DIRS="/etc /home/lunix /root /var/spool/cron /usr/local"
 #Agregar con prefijo --exclude los subdirectorios que deben ignorarse
-ADD_BACKUP_PARAMS="--exclude-caches --exclude '/home/*/.cache/*' --exclude '/var/cache/*' --exclude '/var/tmp/*'"
+ADD_BACKUP_PARAMS="--exclude-caches --exclude /root/.cache --exclude '/home/*/.cache/*' --exclude '/var/cache/*' --exclude '/var/tmp/*'"
 #Para docker
 #--exclude /u/var-lib-docker
 
