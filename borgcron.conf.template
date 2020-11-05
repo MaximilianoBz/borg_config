@@ -31,13 +31,13 @@ REPO_PASS="PASS_VAR"
 #BACKUP_DIRS: Directorios incluidos en el backup
 #Ejemplos para servidores
 #WEB:
-#BACKUP_DIRS="/etc /home/lunix /home/root /var/spool/cron /usr/local /var/www"
+#BACKUP_DIRS="/etc /home/lunix /root /var/spool/cron /usr/local /var/www"
 #PROXMOX:
-#BACKUP_DIRS="/etc /home/lunix /home/root /etc/pve /var/lib/pve-cluster /root/.ssh /var/spool/cron /usr/local"
+#BACKUP_DIRS="/etc /home/lunix /root /etc/pve /var/lib/pve-cluster /root/.ssh /var/spool/cron /usr/local"
 #UNIFI:
-#BACKUP_DIRS="/etc /home/lunix /home/root /var/spool/cron /usr/local /var/lib/unifi/backup"
+#BACKUP_DIRS="/etc /home/lunix /root /var/spool/cron /usr/local /var/lib/unifi/backup"
 #Por defecto un backup basico
-BACKUP_DIRS="/etc /home/lunix /home/root /var/spool/cron /usr/local"
+BACKUP_DIRS="/etc /home/lunix /root /var/spool/cron /usr/local"
 #Agregar con prefijo --exclude los subdirectorios que deben ignorarse
 ADD_BACKUP_PARAMS="--exclude-caches --exclude '/home/*/.cache/*' --exclude '/var/cache/*' --exclude '/var/tmp/*'"
 #Para docker
