@@ -48,7 +48,6 @@ evaluateExitCodes() {
 	case $1 in
 		2 )
 			error_log "Borg exited with fatal error." #(2)
-			echo "$CONFIG: ERROR" >> /etc/lunix/borg_prune_status
 
 			# ignore last try
 			if [ "$i" -lt "$RETRY_NUM" ]; then
@@ -70,15 +69,12 @@ evaluateExitCodes() {
 			;;
 		1 )
 			error_log "Borg had some WARNINGS, but everything else was okay."
-			echo "$CONFIG: OK" >> /etc/lunix/borg_prune_status
 			;;
 		0 )
 			info_log "Borg has been successful."
-			echo "$CONFIG: OK" >> /etc/lunix/borg_prune_status
 			;;
 		* )
 			error_log "Unknown error with code $1 happened."
-			echo "$CONFIG: ERROR" >> /etc/lunix/borg_prune_status
 			;;
 	esac
 }
@@ -324,7 +320,7 @@ do
 			rm_lock
 
 			# show output
-			evaluateExitCodes "$exitcode_prune" "prune"
+			evaluateExitCodes "$exitcode_prune"
 
 			# exit loop on non-critical errors (ignore 1 = warnings)
 			if [ $exitcode_prune -le 1 ]; then
@@ -339,11 +335,15 @@ do
 	# log
 	if [ "$exitcode" -ne 0 ]; then
 		error_log "Prune \"$CONFIG\" ended, but it seems something went wrong."
+		echo "$CONFIG: ERROR" >> /etc/lunix/borg_prune_status
 	else
 		info_log "Prune \"$CONFIG\" ended successfully."
+		echo "$CONFIG: OK" >> /etc/lunix/borg_prune_status
 	fi
 
 	# Restauramos permisos para usuario borg
 	chown borg.borg -R $REPO
 	
+	# Restauramos exitcode
+	exitcode=0
 done
